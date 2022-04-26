@@ -19,16 +19,25 @@ int main(){
     // INICIALIZAR VARI�VEIS
     char ciclica;
     int respondido = 0; //bool?
-    // int n;
-    // float a[MAX];
-    // float b[MAX];
-    // float c[MAX];
-    // float d[MAX];
+    int n;
+    float A[MAX][MAX];
+    float a[MAX];
+    float b[MAX];
+    float c[MAX];
+    float d[MAX];
     float l[MAX];
     float u[MAX];
     float y[MAX];
     float x[MAX];
     float z[MAX];
+
+    // int n = 4;//20;
+    // //lembrar da nomenclatura usada (e.g. d[0] não existe)
+    // float a[ ] = { 0, 0, 3, 5, 7};
+    // float b[ ] = { 0, 1, 2, 3, 4};
+    // float c[ ] = { 0, 1, 3, 5, 0};
+
+    // float d[ ] = { 0, 5, 4, 3, 2};
 
 
     // PREENCHER VETORES a,b,c e d
@@ -63,19 +72,38 @@ int main(){
         cin >> d[i];
     } */
 
-    int n = 4;//20;
-    //lembrar da nomenclatura usada (e.g. d[0] não existe)
-    float a[ ] = { 0, 0, 3, 5, 7};
-    float b[ ] = { 0, 1, 2, 3, 4};
-    float c[ ] = { 0, 1, 3, 5, 0};
+    //Entrando com a matriz inteira
+    cout<<"Entre com os valores linha a linha: "<< endl;
+    for (int i = 1; i < n; i++){
+        cout<<"Entre individualmente com os valores da linha "<<i<<" : "<< endl;
+        for (int j = 1; j < n; j++){
+            cin >> A[i][j];
+        }
 
-    float d[ ] = { 0, 5, 4, 3, 2};
+        //Diagonais a cada linha
+        a[i] = A[i][i-1];
+        b[i] = A[i][i];
+        c[i] = A[i][i+1];
+    }
+
+    //Ciclica?
+    cout << "A matriz e' ciclica? [S/N] :";
+    cin >> ciclica;
+    if (ciclica == 'S' || ciclica == 's'){ 
+        a[1] = A[1][n];
+        c[n] = A[n][1];
+    }
+    else{
+        a[1] = 0;
+        c[n] = 0;
+    }
+
 
     // SOLUCAO DO EP
     decomposicaoLU(a,b,c,l,u,n);
     while (!respondido){
-        cout << "A matriz eh ciclica? [S/N] :";
-        cin >> ciclica;
+        // cout << "A matriz eh ciclica? [S/N] :"; //anteriormente
+        // cin >> ciclica;
 
         if (ciclica == 'S' || ciclica == 's'){ // resolver matriz c�clica
             float dn = d[n];
