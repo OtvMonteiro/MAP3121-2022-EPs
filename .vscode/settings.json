@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.asm": "vasmmot",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "ostream": "cpp"
     }
 }

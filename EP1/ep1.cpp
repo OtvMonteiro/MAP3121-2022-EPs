@@ -73,10 +73,12 @@ int main(){
     } */
 
     //Entrando com a matriz inteira
+    cout << "Digite o numero n da matriz tridiagonal A nxn: " ;
+    cin >> n;
     cout<<"Entre com os valores linha a linha: "<< endl;
-    for (int i = 1; i < n; i++){
+    for (int i = 1; i <= n; i++){
         cout<<"Entre individualmente com os valores da linha "<<i<<" : "<< endl;
-        for (int j = 1; j < n; j++){
+        for (int j = 1; j <= n; j++){
             cin >> A[i][j];
         }
 
@@ -96,8 +98,36 @@ int main(){
     else{
         a[1] = 0;
         c[n] = 0;
+        //Para calculculo final
+        A[1][n] = 0;
+        A[n][1] = 0;
     }
 
+    //Entrada de d
+    cout << "Digite os valores do termo d: "<<endl; 
+    for (int i = 1; i <= n; i++){
+        cin >> d[i];
+    }
+
+    //Mostra da matriz
+    cout <<endl<< "A matriz de entrada e'..."<<endl;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            cout<<A[i][j]<<" ";
+        }
+        cout << endl;
+    }
+    //Mostra das diagonais
+    cout <<endl<< "Os parametros utilizados sao: "<<endl;
+    for (int i = 1; i <= n; i++)
+    {
+        cout<<"a"<<i<<" = "<<a[i]<<endl;
+        cout<<"b"<<i<<" = "<<b[i]<<endl;
+        cout<<"c"<<i<<" = "<<c[i]<<endl;
+        cout<<"d"<<i<<" = "<<d[i]<<endl;
+
+    }
+    
 
     // SOLUCAO DO EP
     decomposicaoLU(a,b,c,l,u,n);
@@ -115,10 +145,11 @@ int main(){
             v[1]=a[1];
             v[n]=c[n-1];
             respondido = 1;
-            cout << "Digite o valor do termo a1: ";
-            cin >> a[1];
-            cout << "Digite o valor do termo c" << n << ": ";
-            cin >> c[n];
+            // cout << "Digite o valor do termo a1: ";
+            // cin >> a[1];
+            // cout << "Digite o valor do termo c" << n << ": ";
+            // cin >> c[n];
+
             // Obter y e z solucoes das equacoes Ty=d ; Tz=v
             solucaoLU(y,aux,d,l,u,c,n-1);
             solucaoLU(z,aux,v,l,u,c,n-1);
@@ -132,18 +163,28 @@ int main(){
             respondido = 1;
             solucaoLU(x,y,d,l,u,c,n);
 
-        }else cout <<"Opcao invalida";
+        }else cout <<"Opcao invalida";//Acho desnecessario, da pra considerar só um else acima
     }
 
     // Imprimir resposta
     cout << "O vetor solucao da matriz A eh:\n";
-    imprimir_vetor(x,n);
+    imprimir_vetor(x,n); //btw o vetor x é vertical, aqui esta' horizontal
 
     //Calcular resultado e avaliar se bate
+    float solucao[MAX];
+    cout<<endl<<endl<<"Comparacao entre solucao encontrada e esperada:"<<endl;
+    for (int i = 1; i <= n; i++) {
+        solucao[i] = 0;
+        for (int j = 1; j <= n; j++) {
+            solucao[i] =+ A[i][j]*x[j];
+        }
+        cout<<"d"<<i<<": encontrada="<<solucao[i]<<"; esperada="<<d[i]<<".\n";
+    }
+
 
     
     //Finalizar
-    cout << "\n\nPressione alguma tecla para finalizar.\n";
+    cout << "\n\nDigite algum caractere para finalizar.\n";
     char end;
     cin >> end;
     return 1;
