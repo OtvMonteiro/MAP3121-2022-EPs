@@ -1,5 +1,8 @@
 #include<stdio.h>
 #include <iostream>
+#include <cmath>
+
+const double PI = 3.141592653589793238463;
 #define MAX 100
 
 using namespace std;
@@ -17,10 +20,10 @@ void imprimir_vetor(float V[MAX],int n);
 
 int main(){
     // INICIALIZAR VARI�VEIS
-    char ciclica;
+    bool ciclica = true;
     int respondido = 0; //bool?
     int n;
-    float A[MAX][MAX];
+    //float A[MAX][MAX];
     float a[MAX];
     float b[MAX];
     float c[MAX];
@@ -31,92 +34,24 @@ int main(){
     float x[MAX];
     float z[MAX];
 
-    // int n = 4;//20;
-    // //lembrar da nomenclatura usada (e.g. d[0] não existe)
-    // float a[ ] = { 0, 0, 3, 5, 7};
-    // float b[ ] = { 0, 1, 2, 3, 4};
-    // float c[ ] = { 0, 1, 3, 5, 0};
+    n=20;
+    //Parametros até n-1
+    for (int i = 1; i < n; i++)
+    {
+        float aux = (float) i;
+        a[i] = (2*aux - 1)/(4*aux); 
+        b[i] = 2;
+        c[i] = 1 - a[i];
+        d[i] = cos(2*PI*i*i/(n*n));
+    }
+    //Parametros em i=n
+    a[n] = (2*n + 1)/(2*n);
+    b[n] = 2;
+    c[n] = 1 - a[n];
+    d[n] = 1;//cos(2*PI)
 
-    // float d[ ] = { 0, 5, 4, 3, 2};
-
-
-    // PREENCHER VETORES a,b,c e d
-        //Preenchimento pouco eficiente para matrizes grandes
-        //Imagino que podemos pegar a entrada de um jeito diferente. Acho que isso facilitaria também, além dos testes, a integração com código dos outros EPs e o código de verificação.
-        //Começando com uma estrutura tipo A[MAX][MAX] e rodamos linha a linha (n vezes em cada) para os inputs, tirando depois os paramentros (os termos) das matrizes tridiagonais (ciclicas ou não)
-        //Do contrario, imaginando que os parametros serao passados diretamente (as diagonais como vetor) podemos testar com essa estrutura no proprio codigo (sem entrada de usuario): b[ ] = { 0, 1, 3, 5, 7};
-
-        //Acho que podemos pedir no começo se a matriz e' ciclica ou não, e então receber a entrada, alterando-a se necessario. (se possivel, não analisei essa porcao do codigo, mas imagino que ficaria mais elegante)
-
-    /* cout << "Digite o numero n da matriz tridiagonal A nxn: " ;
-    cin >> n;
-
-    //Vetor a começa do elemento 1 para manter nomenclatura do pdf
-    a[1]=0; c[n]=0; 
     
-    cout << "Em seguida serah pedido para que digite os valores das diagonais da Matriz, termo a termo:\n";
-    for(int i=2;i<=n;i++){ // vetor a
-        cout << "Digite o valor do termo a" << i << ": ";
-        cin >> a[i];
-    }
-     for(int i=1;i<=n;i++){ // vetor b
-        cout << "Digite o valor do termo b" << i << ": ";
-        cin >> b[i];
-    }
-    for(int i=1;i<=n-1;i++){ // vetor c
-        cout << "Digite o valor do termo c" << i << ": ";
-        cin >> c[i];
-    }
-     for(int i=1;i<=n;i++){ // vetor d
-        cout << "Digite o valor do termo d" << i << ": ";
-        cin >> d[i];
-    } */
 
-    //Entrando com a matriz inteira
-    cout << "Digite o numero n da matriz tridiagonal A nxn: " ;
-    cin >> n;
-    cout<<"Entre com os valores linha a linha: "<< endl;
-    for (int i = 1; i <= n; i++){
-        cout<<"Entre individualmente com os valores da linha "<<i<<" : "<< endl;
-        for (int j = 1; j <= n; j++){
-            cin >> A[i][j];
-        }
-
-        //Diagonais a cada linha
-        a[i] = A[i][i-1];
-        b[i] = A[i][i];
-        c[i] = A[i][i+1];
-    }
-
-    //Ciclica?
-    cout << "A matriz e' ciclica? [S/N] :";
-    cin >> ciclica;
-    if (ciclica == 'S' || ciclica == 's'){ 
-        a[1] = A[1][n];
-        c[n] = A[n][1];
-    }
-    else{
-        a[1] = 0;
-        c[n] = 0;
-        //Para calculculo final
-        A[1][n] = 0;
-        A[n][1] = 0;
-    }
-
-    //Entrada de d
-    cout << "Digite os valores do termo d: "<<endl; 
-    for (int i = 1; i <= n; i++){
-        cin >> d[i];
-    }
-
-    //Mostra da matriz
-    cout <<endl<< "A matriz de entrada e'..."<<endl;
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            cout<<A[i][j]<<" ";
-        }
-        cout << endl;
-    }
     //Mostra das diagonais
     cout <<endl<< "Os parametros utilizados sao: "<<endl;
     for (int i = 1; i <= n; i++)
@@ -130,12 +65,10 @@ int main(){
     
 
     // SOLUCAO DO EP
+
     decomposicaoLU(a,b,c,l,u,n);
     while (!respondido){
-        // cout << "A matriz eh ciclica? [S/N] :"; //anteriormente
-        // cin >> ciclica;
-
-        if (ciclica == 'S' || ciclica == 's'){ // resolver matriz c�clica
+        if (ciclica){ // resolver matriz c�clica
             float dn = d[n];
             float aux[MAX];
             float v[MAX];
@@ -145,11 +78,7 @@ int main(){
             v[1]=a[1];
             v[n]=c[n-1];
             respondido = 1;
-            // cout << "Digite o valor do termo a1: ";
-            // cin >> a[1];
-            // cout << "Digite o valor do termo c" << n << ": ";
-            // cin >> c[n];
-
+            
             // Obter y e z solucoes das equacoes Ty=d ; Tz=v
             solucaoLU(y,aux,d,l,u,c,n-1);
             solucaoLU(z,aux,v,l,u,c,n-1);
@@ -159,27 +88,15 @@ int main(){
                 x[i]=y[i]-x[n]*z[i];
 
 
-        }else if (ciclica == 'N' || ciclica == 'n'){ // resolver matriz normal
+        }else{ // resolver matriz normal
             respondido = 1;
             solucaoLU(x,y,d,l,u,c,n);
-
-        }else cout <<"Opcao invalida";//Acho desnecessario, da pra considerar só um else acima
+        }
     }
 
     // Imprimir resposta
     cout << "O vetor solucao da matriz A eh:\n";
     imprimir_vetor(x,n); //btw o vetor x é vertical, aqui esta' horizontal
-
-    //Calcular resultado e avaliar se bate
-    float solucao[MAX];
-    cout<<endl<<endl<<"Comparacao entre solucao encontrada e esperada:"<<endl;
-    for (int i = 1; i <= n; i++) {
-        solucao[i] = 0;
-        for (int j = 1; j <= n; j++) {
-            solucao[i] =+ A[i][j]*x[j];
-        }
-        cout<<"d"<<i<<": encontrada="<<solucao[i]<<"; esperada="<<d[i]<<".\n";
-    }
 
 
     

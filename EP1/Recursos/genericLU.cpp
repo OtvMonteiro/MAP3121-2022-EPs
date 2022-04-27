@@ -34,7 +34,7 @@ int main() {
    cout << "Enter size of square matrix : "<<endl;
    cin >> n;
 
-   cout<<"Enter matrix values: "<endl;
+   cout<<"Enter matrix values: "<<endl;
    for (i = 0; i < n; i++)
    for (j = 0; j < n; j++)
    cin >> a[i][j];

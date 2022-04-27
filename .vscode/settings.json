@@ -2,6 +2,7 @@
     "files.associations": {
         "*.asm": "vasmmot",
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "cmath": "cpp"
     }
 }
