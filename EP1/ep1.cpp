@@ -97,38 +97,39 @@ int main(){
         case 2: // Gerar a matriz
             ciclica = true;
             //Parametros até n-1
-                for (int i = 1; i < n; i++)
-                {
-                    float aux = (float) i;
-                    a[i] = (2*aux - 1)/(4*aux);
-                    b[i] = 2;
-                    c[i] = 1 - a[i];
-                    d[i] = cos((2*PI*i*i)/(n*n));
-                }
-                //Parametros em i=n
-                a[n] = (2*n - 1)/(2*n);
-                b[n] = 2;
-                c[n] = 1 - a[n];
-                d[n] = cos(2*PI);
+            for (int i = 1; i < n; i++)
+            {
+                float aux = (float) i;
+                a[i] = (2*aux - 1)/(4*aux);
+                b[i] = 2;
+                c[i] = 1 - a[i];
+                d[i] = cos((2*PI*i*i)/(n*n));
+            }
+            //Parametros em i=n
+            float aux; aux = n;
+            a[n] = (2*aux - 1)/(2*aux);
+            b[n] = 2;
+            c[n] = 1 - a[n];
+            d[n] = cos(2*PI);
 
-                // construir a matriz A
-                for (int i = 1; i <=n; i++){
-                    for (int j = 1; j<=n; j++){
-                        if(i==j+1){
-                            A[i][j]=a[i];
-                        } else if(i==j){
-                            A[i][j]=b[i];
-                        } else if(i+1==j){
-                            A[i][j]=c[i];
-                        } else if(i==1 && j==n){
-                            A[i][j]=a[i];
-                        } else if(i==n && j==1){
-                            A[i][j]=c[n];
-                        }
+            // construir a matriz A
+            for (int i = 1; i <=n; i++){
+                for (int j = 1; j<=n; j++){
+                    if(i==j+1){
+                        A[i][j]=a[i];
+                    } else if(i==j){
+                        A[i][j]=b[i];
+                    } else if(i+1==j){
+                        A[i][j]=c[i];
+                    } else if(i==1 && j==n){
+                        A[i][j]=a[i];
+                    } else if(i==n && j==1){
+                        A[i][j]=c[n];
                     }
                 }
-                break;
-            default: cout<< "escolha invalida";
+            }
+            break;
+        default: cout<< "escolha invalida";
     }
 
     //Imprimir a matriz

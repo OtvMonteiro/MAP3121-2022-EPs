@@ -35,20 +35,20 @@ int main(){
     float z[MAX];
 
     n=20;
-    //Parametros até n-1
+   //Parametros até n-1
     for (int i = 1; i < n; i++)
     {
         float aux = (float) i;
-        a[i] = (2*aux - 1)/(4*aux); 
+        a[i] = (2*aux - 1)/(4*aux);
         b[i] = 2;
         c[i] = 1 - a[i];
-        d[i] = cos(2*PI*i*i/(n*n));
+        d[i] = cos((2*PI*i*i)/(n*n));
     }
     //Parametros em i=n
-    a[n] = (2*n + 1)/(2*n);
+    a[n] = (2*n - 1)/(2*n);
     b[n] = 2;
     c[n] = 1 - a[n];
-    d[n] = 1;//cos(2*PI)
+    d[n] = cos(2*PI);
 
     
 
