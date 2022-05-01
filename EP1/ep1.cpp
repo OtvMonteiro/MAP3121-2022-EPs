@@ -68,12 +68,16 @@ int main(){
 
             //Ciclica?
             cout << "A matriz e' ciclica? [S/N] :";
-            cin >> ciclica;
-            if (ciclica == 'S' || ciclica == 's'){
+            char cicl;
+            cin >> cicl;
+            if (cicl == 'S' || cicl == 's'){ciclica = true;}
+            else{ciclica = false;}
+            
+            if (ciclica){
                 a[1] = A[1][n];
                 c[n] = A[n][1];
             }
-            else if (ciclica == 'n' || ciclica == 'N'){
+            else{
                 a[1] = 0;
                 c[n] = 0;
                 //Para calculo final
@@ -99,13 +103,13 @@ int main(){
                     a[i] = (2*aux - 1)/(4*aux);
                     b[i] = 2;
                     c[i] = 1 - a[i];
-                    d[i] = cos(2*PI*i*i/(n*n));
+                    d[i] = cos((2*PI*i*i)/(n*n));
                 }
                 //Parametros em i=n
-                a[n] = (2*n + 1)/(2*n);
+                a[n] = (2*n - 1)/(2*n);
                 b[n] = 2;
                 c[n] = 1 - a[n];
-                d[n] = 1;//cos(2*PI)
+                d[n] = cos(2*PI);
 
                 // construir a matriz A
                 for (int i = 1; i <=n; i++){
