@@ -158,7 +158,7 @@ int main(){
             v[i]=0;
         }
         v[1]=a[1];
-        v[n]=c[n-1];
+        v[n-1]=c[n-1];
 
         // Obter y e z solucoes das equacoes Ty=d ; Tz=v
         solucaoLU(y,aux,d,l,u,c,n-1);
