@@ -1,3 +1,7 @@
+//EP1 MAP3121
+//Diogo Vaccaro 8803195
+//Otávio Henrique Monteiro 10774159
+
 #include<stdio.h>
 #include <iostream>
 #include <cmath>
