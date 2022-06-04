@@ -1,0 +1,25 @@
+1)
+Cubo: 1.0
+Tetraedro: 0.16666666666666669
+
+2)
+Integrate[Integrate[1,{y,0,1-Power[x,2]}],{x,0,1}]
+=2/3= 0.6666666666666667
+0.6667560429365089
+
+3)
+d/dx(e^(y/x)) = -(y e^(y/x))/x^2
+d/dy(e^(y/x)) = e^(y/x)/x
+
+
+Superficie: 0.10549788240051992
+Volume da Regiao: 0.03330556611623208
+
+4)
+
+Calota: 0.17998707911191525
+Solido de Revolucao: 3.7582496332093873
+
+
+2 π integral_(-1)^1 ( integral_0^(e^(-y^2)) 1dx) dy  //exemplo com distancia = 1 , mudar!
+

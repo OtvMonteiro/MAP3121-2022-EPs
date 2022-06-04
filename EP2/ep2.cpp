@@ -17,11 +17,16 @@ double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
     double x,y;
     for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
         x = a + ba2*(T[i]+1);
-        y = pow(x,3)+1;//funcao_escolhida f(x)=x^3+1
+        y = funcao_escolhida(x);
         integral += y*W[i];
     }
     integral = integral * ba2; // valor final
     return integral;
+}
+
+double funcao_escolhida (double x){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
+    return pow(x,3)+1;// f(x)=x^3+1
+    //return 1;
 }
 
 int main(){
@@ -43,7 +48,7 @@ int main(){
     double T[MAX]; //vetor de abscissas
     double W[MAX]; //vetor de pesos
    
-    //DADOS DE ABCISSAS E PESOS
+    //DADOS DE ABCISSAS E PESOS, ja prontos para uso
     double x6[] = {0.0, -0.9324695142031520278123016, -0.6612093864662645136613996, -0.2386191860831969086305017,
                         0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016}; 
     double w6[] = {0.0, 0.1713244923791703450402961, 0.3607615730481386075698335, 0.4679139345726910473898703,
@@ -57,7 +62,7 @@ int main(){
     double w10[] = {0.0, 0.0666713443086881375935688, 0.1494513491505805931457763, 0.2190863625159820439955349, 0.2692667193099963550912269, 0.2955242247147528701738930,
                          0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688};
 
-    // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 at� n)
+    // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
     switch (n)
     {
     case 2:
