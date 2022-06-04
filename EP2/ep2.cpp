@@ -1,6 +1,6 @@
 //EP2 MAP3121
 //Diogo Vaccaro 8803195
-//Otávio Henrique Monteiro 10774159
+//Otï¿½vio Henrique Monteiro 10774159
 
 #include<stdio.h>
 #include <iostream>
@@ -25,8 +25,8 @@ double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
 }
 
 int main(){
-    // INICIALIZAR VARIÁVEIS
-    // Nº de nós
+    // INICIALIZAR VARIï¿½VEIS
+    // Nï¿½ de nï¿½s
     int n;
     int m;
     int i;
@@ -42,31 +42,38 @@ int main(){
     m = 2*n-1; // maximo grau do polinomio
     double T[MAX]; //vetor de abscissas
     double W[MAX]; //vetor de pesos
-    //
+   
+    //DADOS DE ABCISSAS E PESOS
+    double x6[] = {0.0, -0.9324695142031520278123016, -0.6612093864662645136613996, -0.2386191860831969086305017,
+                        0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016}; 
+    double w6[] = {0.0, 0.1713244923791703450402961, 0.3607615730481386075698335, 0.4679139345726910473898703,
+                        0.4679139345726910473898703, 0.3607615730481386075698335, 0.1713244923791703450402961};
+    
 
-    // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 até n)
-    // para n=2
-    if (n==2){
+
+    // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 atï¿½ n)
+    switch (n)
+    {
+    case 2:
         T[1]=-sqrt(3)/3;
         T[2]=-T[1];
         W[1]=1;
         W[2]=W[1];
+        break;
+    
+    case 6:
+        for (size_t i = 0; i <= n; i++)
+        {
+           T[i] = x6[i];
+           W[i] = w6[i];
+        }
+        break;
+    default:
+        cout << "Valor de n invÃ¡lido";
+        return 0;
     }
-    if (n==6){
-        T[4]=0.2386191860831969086305017;
-        T[5]=0.6612093864662645136613996;
-        T[6]=0.9324695142031520278123016;
-        T[3]=-T[4];
-        T[2]=-T[5];
-        T[1]=-T[6];
 
-        W[4]=0.4679139345726910473898703;
-        W[5]=0.3607615730481386075698335;
-        W[6]=0.1713244923791703450402961;
-        W[3]=W[4];
-        W[2]=W[5];
-        W[1]=W[6];
-    }
+    
 
     // SOLUCAO
     double integral;
@@ -76,7 +83,7 @@ int main(){
 
     // Imprimir resposta
     cout << "Para n igual a " << n <<endl;
-    cout << "O resultado da Integração é:" << integral << endl;
+    cout << "O resultado da Integracao e':" << integral << endl;
 
     //Calcular resultado exato
 
