@@ -1,11 +1,17 @@
 1)
 Cubo: 1.0
+(integral tripla de 0 a 1 em cada)
 Tetraedro: 0.16666666666666669
+
 
 2)
 Integrate[Integrate[1,{y,0,1-Power[x,2]}],{x,0,1}]
 =2/3= 0.6666666666666667
 0.6667560429365089
+
+n=6: 0.666667
+
+
 
 3)
 d/dx(e^(y/x)) = -(y e^(y/x))/x^2

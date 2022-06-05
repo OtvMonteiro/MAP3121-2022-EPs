@@ -8,23 +8,30 @@
 #include<iomanip>
 
 #define MAX 11
+char questao = '2';
 
 using namespace std;
 
 double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]);
-double funcao_escolhida(double x);
-
+double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]);
+double funcao_escolhida(double x, double y);
+double c_escolhido(double xi);
+double d_escolhido(double xi);
 
 int main(){
     // INICIALIZAR VARI�VEIS
     // N� de n�s
-    int n;
+    int n = 6;
     int m;
     int i;
     int N;
     double a,b;
-    cout<<"Digite o valor de n de pontos (>=1): \n";
-    cin>>n;
+    
+    // cout<<"Digite o valor de n de pontos (>=1): \n";
+    // cin>>n;
+    cout<<"Digite o numero da questao : \n";
+    cin>>questao;
+
     cout<<"Digite o limite inferior de integracao a : \n";
     cin>>a;
     cout<<"Digite o limite superior de integracao b : \n";
@@ -48,56 +55,56 @@ int main(){
     double w10[] = {0.0, 0.0666713443086881375935688, 0.1494513491505805931457763, 0.2190863625159820439955349, 0.2692667193099963550912269, 0.2955242247147528701738930,
                          0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688};
 
-    // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
-    switch (n)
-    {
-    case 2:
-        T[1]=-sqrt(3)/3;
-        T[2]=-T[1];
-        W[1]=1;
-        W[2]=W[1];
-        break;
-    case 6:
-        for (size_t i = 0; i <= n; i++)
+    while(n<12){
+        // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
+        switch (n)
         {
-           T[i] = x6[i];
-           W[i] = w6[i];
+        case 2: //Extra
+            T[1]=-sqrt(3)/3;
+            T[2]=-T[1];
+            W[1]=1;
+            W[2]=W[1];
+            break;
+        case 6:
+            for (size_t i = 0; i <= n; i++){
+                T[i] = x6[i];
+                W[i] = w6[i];
+            }break;
+        case 8:
+            for (size_t i = 0; i <= n; i++){
+                T[i] = x8[i];
+                W[i] = w8[i];
+            }break;
+        case 10:
+            for (size_t i = 0; i <= n; i++){
+                T[i] = x10[i];
+                W[i] = w10[i];
+            }break;
+        default:
+            cout << "Valor de n inválido";
+            char end; cin >> end;
+            return 0;
         }
-        break;
-    case 8:
-        for (size_t i = 0; i <= n; i++)
-        {
-           T[i] = x8[i];
-           W[i] = w8[i];
-        }
-        break;
-    case 10:
-        for (size_t i = 0; i <= n; i++)
-        {
-           T[i] = x10[i];
-           W[i] = w10[i];
-        }
-        break;
-    default:
-        cout << "Valor de n inválido";
-        char end; cin >> end;
-        return 0;
+
+        
+
+        // SOLUCAO
+        double integral;
+        //integral = calcula_integral(n,a,b,T,W);
+        integral = integral_dupla(n,a,b,T,W);
+
+
+        // Imprimir resposta
+        cout << "Para n igual a " << n <<endl;
+        cout << "O resultado da Integracao e':" << integral << endl;
+
+        //Proximo valor de n, se aplicavel
+        n+=2;
     }
 
+
+    //Resultado exato
     
-
-    // SOLUCAO
-    double integral;
-    integral = calcula_integral(n,a,b,T,W);
-
-
-
-    // Imprimir resposta
-    cout << "Para n igual a " << n <<endl;
-    cout << "O resultado da Integracao e':" << integral << endl;
-
-    //Calcular resultado exato
-
 
     //Finalizar
     cout << "\n\nDigite algum caractere para finalizar.\n";
@@ -107,24 +114,91 @@ int main(){
 }
 
 
-
-
 double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
     double integral=0; // valor da integral
     double ba2 = (b-a)/2; // valor medio do intervalo ab
     double x,y;
     for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
         x = a + ba2*(T[i]+1);
-        y = funcao_escolhida(x);
+        y = funcao_escolhida(x,0);
         integral += y*W[i];
     }
     integral = integral * ba2; // valor final
     return integral;
 }
 
-double funcao_escolhida(double x){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
+double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
+    double ba2 = (b-a)/2; // valor medio do intervalo ab
+    double xi, yij, f;
+    double sum_i = 0;
+
+    for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
+        xi = a + ba2*(T[i]+1);
+        
+        double sum_j = 0;
+        double dc2 = (d_escolhido(xi)-c_escolhido(xi))/2; // valor medio do intervalo cd 
+        for (int j =1;j<=n;j++)
+        {
+            yij = c_escolhido(xi) + dc2*(T[j]+1);
+            f = funcao_escolhida(xi, yij);
+            sum_j += W[j] * f ;
+        }
+            
+        sum_i += W[i] * sum_j * dc2 ;
+    }
+    return sum_i * ba2 ;
+}
+
+
+//ATUALIZAR TODOS OS VALORES DAQUI EM DIANTE
+double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
     //return pow(x,3)+1;// f(x)=x^3+1
-    //Questao 2
-    return 1 - x*x;
-    //return 1;
+    switch (questao)
+    {
+    case '1':
+        return 1;
+    case '2':
+        return 1; 
+    case '3':
+        return 1; 
+    case '4':
+        return 1;
+    
+    default:
+        return 1;
+    }
+}
+
+double c_escolhido(double xi){
+    switch (questao)
+    {
+    case '1':
+        return 0;
+    case '2':
+        return 0; //Ok
+    case '3':
+        return pow(xi, 3); //Ok
+    case '4':
+        return 0;
+    
+    default:
+        return 0;
+    }
+}
+
+double d_escolhido(double xi){
+    switch (questao)
+    {
+    case '1':
+        return 0;
+    case '2':
+        return 1 - xi*xi; //Ok
+    case '3':
+        return pow(xi, 2); //Ok
+    case '4':
+        return 0;
+    
+    default:
+        return 0;
+    }
 }
