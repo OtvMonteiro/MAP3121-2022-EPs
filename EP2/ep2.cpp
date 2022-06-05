@@ -8,6 +8,7 @@
 #include<iomanip>
 
 #define MAX 11
+const double PI = 3.141592653589793238463;
 char questao = '2';
 
 using namespace std;
@@ -20,7 +21,7 @@ double d_escolhido(double xi);
 
 int main(){
     // INICIALIZAR VARI�VEIS
-    // N� de n�s
+    // Nmr de nos
     int n = 6;
     int m;
     int i;
@@ -98,26 +99,27 @@ int main(){
             resultado = integral_dupla(n,0,1,T,W); //Tetraedro
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
-            cout << "O resultado da Integracao e':" << resultado << endl;
+            cout << "O resultado do Volume do Tetraedro e':" << resultado << endl;
             break;
         case '2':
             resultado = integral_dupla(n,0,1,T,W);
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
-            cout << "O resultado da Integracao e':" << resultado << endl;
+            cout << "O resultado da Area da regiao e':" << resultado << endl;
             break; 
         case '3':
             resultado = integral_dupla(n,0.1,0.5,T,W);//Area
                      //Volume
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
-            cout << "O resultado da Integracao e':" << resultado << endl;
+            cout << "O resultado da Area da Superficie e':" << resultado << endl;
             break; 
         case '4':
-            
+                //Calota
+            resultado = 2*PI*integral_dupla(n,-1,1,T,W);//Solido Revolucao
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
-            cout << "O resultado da Integracao e':" << resultado << endl;
+            cout << "O resultado do Volume do Solido de Revolucao e':" << resultado << endl;
             break;
         
         default:
@@ -190,7 +192,7 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
         return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1); //area 
         return exp(x*y); // volume do exemplo 3 
     case '4':
-        return 1;
+        return y; //x (convencao invertida nesse item) - solido de revolucao
     
     default:
         return 1;
@@ -225,7 +227,7 @@ double d_escolhido(double xi){
     case '3':
         return pow(xi, 2); //Ok
     case '4':
-        return 0;
+        return exp(-xi*xi);//e^-y^2
     
     default:
         return 0;
