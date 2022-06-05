@@ -30,7 +30,7 @@ int main(){
     cout.precision(17);
 
     cout<<"Bem-Vindo ao EP2 de MAP3121-2022 \n";
-    cout<<"A seguir, digite de 1 a´ 4 a questao do enunciado a qual deseja o calculo das integrais duplas \n";
+    cout<<"A seguir, digite de 1 a 4 a questao do enunciado a qual deseja o calculo das integrais duplas \n";
     cout<<"Numero da questao : \n";
     cin>>questao;
 
