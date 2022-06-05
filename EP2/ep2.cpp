@@ -32,7 +32,6 @@ int main(){
     cout<<"Bem-Vindo ao EP2 de MAP3121-2022 \n";
     cout<<"A seguir, digite de 1 a 4 a questao do enunciado a qual deseja o calculo das integrais duplas \n";
     cout<<"Numero da questao : \n";
-
     cin>>questao;
 
 
@@ -81,10 +80,11 @@ int main(){
                 W[i] = w10[i];
             }break;
         default:
-            cout << "Valor de n invï¿½lido";
+            cout << "Valor de n inválido";
             char end; cin >> end;
             return 0;
         }
+
 
 
         // SOLUCAO INDIVIDUAL PARA CADA EXEMPLO
@@ -124,11 +124,16 @@ int main(){
             questao = '3';
             break;
         case '4':
-                //Calota
             resultado = 2*PI*integral_dupla(n,-1,1,T,W);//Solido Revolucao
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado do Volume do Solido de Revolucao e':" << resultado << endl;
+            questao = '8';
+            resultado = 2*PI*integral_dupla(n,0.75,1,T,W);//Calota
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado do Volume da calota esferica de altura 1/4 e':" << resultado << endl;
+            questao = '4';
             break;
 
         default:
@@ -182,7 +187,6 @@ double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
             f = funcao_escolhida(xi, yij);
             sum_j += W[j] * f ;
         }
-
         sum_i += W[i] * sum_j * dc2 ;
     }
     return sum_i * ba2 ;
@@ -208,7 +212,8 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
         return exp(y/x);
     case '4':
         return y; //x (convencao invertida nesse item) - solido de revolucao
-
+    case '8':
+        return y;
     default:
         return 1;
     }
@@ -232,7 +237,8 @@ double c_escolhido(double xi){
         return pow(xi,3);
     case '4':
         return 0;
-
+    case '8':
+        return 0;
     default:
         return 0;
     }
@@ -257,7 +263,8 @@ double d_escolhido(double xi){
         return pow(xi,2);
     case '4':
         return exp(-xi*xi);//e^-y^2
-
+    case '8':
+        return sqrt(1-xi*xi);
     default:
         return 0;
     }
