@@ -26,6 +26,7 @@ int main(){
     int i;
     int N;
     double a,b;
+    cout.precision(17);
     
     // cout<<"Digite o valor de n de pontos (>=1): \n";
     // cin>>n;
@@ -93,28 +94,36 @@ int main(){
         switch (questao)
         {
         case '1':
-            
+                //Cubo
+            resultado = integral_dupla(n,0,1,T,W); //Tetraedro
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado da Integracao e':" << resultado << endl;
             break;
         case '2':
             resultado = integral_dupla(n,0,1,T,W);
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado da Integracao e':" << resultado << endl;
             break; 
         case '3':
             resultado = integral_dupla(n,0.1,0.5,T,W);//Area
                      //Volume
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado da Integracao e':" << resultado << endl;
             break; 
         case '4':
             
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado da Integracao e':" << resultado << endl;
             break;
         
         default:
             return 1;
         }
         
-
-
-        // Imprimir resposta
-        cout << "Para n igual a " << n <<endl;
-        cout << "O resultado da Integracao e':" << resultado << endl;
 
         //Proximo valor de n, se aplicavel
         n+=2;
@@ -178,6 +187,7 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
     case '2':
         return 1; 
     case '3':
+        return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1); //area 
         return exp(x*y); // volume do exemplo 3 
     case '4':
         return 1;
@@ -211,9 +221,9 @@ double d_escolhido(double xi){
         return 1-xi; // 0<y<1
     case '2':
         return 1 - xi*xi; //Ok
+        //return sqrt(1-xi);//sqrt(1-y), mesmo resultado
     case '3':
         return pow(xi, 2); //Ok
-        //return sqrt(1-xi);//sqrt(1-y), mesmo resultado
     case '4':
         return 0;
     

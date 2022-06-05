@@ -3,6 +3,12 @@ Cubo: 1.0
 (integral tripla de 0 a 1 em cada)
 Tetraedro: 0.16666666666666669
 
+Para n igual a 6                                                                                                        
+O resultado da Integracao e':0.16666666666666663
+Para n igual a 8
+O resultado da Integracao e':0.16666666666666666
+Para n igual a 10
+O resultado da Integracao e':0.16666666666666669 
 
 2)
 Integrate[Integrate[1,{y,0,1-Power[x,2]}],{x,0,1}]
