@@ -28,19 +28,21 @@ int main(){
     int N;
     //double a,b;
     cout.precision(17);
-    
-    
-    cout<<"Digite o numero da questao : \n";
+
+    cout<<"Bem-Vindo ao EP2 de MAP3121-2022 \n";
+    cout<<"A seguir, digite de 1 a 4 a questao do enunciado a qual deseja o calculo das integrais duplas \n";
+    cout<<"Numero da questao : \n";
+
     cin>>questao;
 
 
     m = 2*n-1; // maximo grau do polinomio
     double T[MAX]; //vetor de abscissas
     double W[MAX]; //vetor de pesos
-   
+
     //DADOS DE ABCISSAS E PESOS, ja prontos para uso
     double x6[] = {0.0, -0.9324695142031520278123016, -0.6612093864662645136613996, -0.2386191860831969086305017,
-                        0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016}; 
+                        0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016};
     double w6[] = {0.0, 0.1713244923791703450402961, 0.3607615730481386075698335, 0.4679139345726910473898703,
                         0.4679139345726910473898703, 0.3607615730481386075698335, 0.1713244923791703450402961};
     double x8[] = {0.0, -0.9602898564975362316835609, -0.7966664774136267395915539, -0.5255324099163289858177390, -0.1834346424956498049394761,
@@ -79,37 +81,48 @@ int main(){
                 W[i] = w10[i];
             }break;
         default:
-            cout << "Valor de n inválido";
+            cout << "Valor de n inv�lido";
             char end; cin >> end;
             return 0;
         }
 
-        
 
         // SOLUCAO INDIVIDUAL PARA CADA EXEMPLO
         double resultado = 0.0;
         switch (questao)
         {
         case '1':
-                //Cubo
+            resultado = integral_dupla(n,0,1,T,W); // Cubo
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado do Volume do Cubo e':" << resultado << endl;
+            questao = '5'; // tetraedro
             resultado = integral_dupla(n,0,1,T,W); //Tetraedro
             // Imprimir resposta
-            cout << "Para n igual a " << n <<endl;
             cout << "O resultado do Volume do Tetraedro e':" << resultado << endl;
+            questao = '1';
             break;
         case '2':
-            resultado = integral_dupla(n,0,1,T,W);
+            resultado = integral_dupla(n,0,1,T,W);//area dydx
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
-            cout << "O resultado da Area da regiao e':" << resultado << endl;
-            break; 
+            cout << "O resultado da Area da regiao calculado por dydx e':" << resultado << endl;
+            questao = '6'; // area dxdy
+            resultado = integral_dupla(n,0,1,T,W);
+            // Imprimir resposta
+            cout << "O resultado da Area da regiao calculado por dxdy e':" << resultado << endl;
+            questao = '2';
+            break;
         case '3':
             resultado = integral_dupla(n,0.1,0.5,T,W);//Area
-                     //Volume
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado da Area da Superficie e':" << resultado << endl;
-            break; 
+            // Imprimir resposta
+            questao = '7';
+            resultado = integral_dupla(n,0.1,0.5,T,W);//Area
+            cout << "O resultado do Volume da Regiao e':" << resultado << endl;
+            questao = '3';
+            break;
         case '4':
                 //Calota
             resultado = 2*PI*integral_dupla(n,-1,1,T,W);//Solido Revolucao
@@ -117,11 +130,11 @@ int main(){
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado do Volume do Solido de Revolucao e':" << resultado << endl;
             break;
-        
+
         default:
             return 1;
         }
-        
+
 
         //Proximo valor de n, se aplicavel
         n+=2;
@@ -129,7 +142,7 @@ int main(){
 
 
     //Resultado exato
-    
+
 
     //Finalizar
     cout << "\n\nDigite algum caractere para finalizar.\n";
@@ -160,16 +173,16 @@ double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
 
     for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
         xi = a + ba2*(T[i]+1);
-        
+
         double sum_j = 0;
-        double dc2 = (d_escolhido(xi)-c_escolhido(xi))/2; // valor medio do intervalo cd 
+        double dc2 = (d_escolhido(xi)-c_escolhido(xi))/2; // valor medio do intervalo cd
         for (int j =1;j<=n;j++)
         {
             yij = c_escolhido(xi) + dc2*(T[j]+1);
             f = funcao_escolhida(xi, yij);
             sum_j += W[j] * f ;
         }
-            
+
         sum_i += W[i] * sum_j * dc2 ;
     }
     return sum_i * ba2 ;
@@ -181,16 +194,21 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
     //return pow(x,3)+1;// f(x)=x^3+1
     switch (questao)
     {
-    case '1': //tetraedro
+    case '1': // cubo
+        return 1;
+    case '5': //tetraedro
         return 1-x-y; //z=f(x,y)=1-x-y
     case '2':
-        return 1; 
-    case '3':
-        return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1); //area 
-        //return exp(x*y); // volume do exemplo 3 
+        return 1;
+    case '6':
+        return 1;
+    case '3': // area
+        return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1);
+    case '7': // volume
+        return exp(y/x);
     case '4':
         return y; //x (convencao invertida nesse item) - solido de revolucao
-    
+
     default:
         return 1;
     }
@@ -200,15 +218,21 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
 double c_escolhido(double xi){
     switch (questao)
     {
-    case '1':
-        return 0; //y<0
+    case '1': // cubo
+        return 0;
+    case '5': // tetraedro
+        return 0;
     case '2':
         return 0; //Ok
+    case '6':
+        return 0;
     case '3':
         return pow(xi, 3); //Ok
+    case '7':
+        return pow(xi,3);
     case '4':
         return 0;
-    
+
     default:
         return 0;
     }
@@ -218,16 +242,22 @@ double c_escolhido(double xi){
 double d_escolhido(double xi){
     switch (questao)
     {
-    case '1':
+    case '1': // cubo
+        return 1;
+    case '5': // tetraedro
         return 1-xi; // 0<y<1
     case '2':
         return 1 - xi*xi; //Ok
-        //return sqrt(1-xi);//sqrt(1-y), mesmo resultado
+    case '6':
+        return sqrt (1-xi);
+        //sqrt(1-xi)=sqrt(1-y)
     case '3':
         return pow(xi, 2); //Ok
+    case '7':
+        return pow(xi,2);
     case '4':
         return exp(-xi*xi);//e^-y^2
-    
+
     default:
         return 0;
     }
