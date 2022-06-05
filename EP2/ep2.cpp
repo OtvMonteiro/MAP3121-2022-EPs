@@ -173,12 +173,12 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
     //return pow(x,3)+1;// f(x)=x^3+1
     switch (questao)
     {
-    case '1':
-        return 1;
+    case '1': //tetraedro
+        return 1-x-y; //z=f(x,y)=1-x-y
     case '2':
         return 1; 
     case '3':
-        return 1; 
+        return exp(x*y); // volume do exemplo 3 
     case '4':
         return 1;
     
@@ -191,7 +191,7 @@ double c_escolhido(double xi){
     switch (questao)
     {
     case '1':
-        return 0;
+        return 0; //y<0
     case '2':
         return 0; //Ok
     case '3':
@@ -208,7 +208,7 @@ double d_escolhido(double xi){
     switch (questao)
     {
     case '1':
-        return 0;
+        return 1-xi; // 0<y<1
     case '2':
         return 1 - xi*xi; //Ok
     case '3':
