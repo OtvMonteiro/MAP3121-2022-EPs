@@ -19,14 +19,14 @@ double c_escolhido(double xi);
 double d_escolhido(double xi);
 
 int main(){
-    // INICIALIZAR VARIï¿½VEIS
-    // Nï¿½ de nï¿½s
+    // INICIALIZAR VARIAVEIS
+    // N de nos
     int n = 6;
     int m;
     int i;
     int N;
     double a,b;
-    
+
     // cout<<"Digite o valor de n de pontos (>=1): \n";
     // cin>>n;
     cout<<"Digite o numero da questao : \n";
@@ -40,10 +40,10 @@ int main(){
     m = 2*n-1; // maximo grau do polinomio
     double T[MAX]; //vetor de abscissas
     double W[MAX]; //vetor de pesos
-   
+
     //DADOS DE ABCISSAS E PESOS, ja prontos para uso
     double x6[] = {0.0, -0.9324695142031520278123016, -0.6612093864662645136613996, -0.2386191860831969086305017,
-                        0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016}; 
+                        0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016};
     double w6[] = {0.0, 0.1713244923791703450402961, 0.3607615730481386075698335, 0.4679139345726910473898703,
                         0.4679139345726910473898703, 0.3607615730481386075698335, 0.1713244923791703450402961};
     double x8[] = {0.0, -0.9602898564975362316835609, -0.7966664774136267395915539, -0.5255324099163289858177390, -0.1834346424956498049394761,
@@ -59,7 +59,7 @@ int main(){
         // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
         switch (n)
         {
-        case 2: //Extra   - testes
+        case 2: //Extra
             T[1]=-sqrt(3)/3;
             T[2]=-T[1];
             W[1]=1;
@@ -81,40 +81,22 @@ int main(){
                 W[i] = w10[i];
             }break;
         default:
-            cout << "Valor de n invÃ¡lido";
+            cout << "Valor de n inválido";
             char end; cin >> end;
             return 0;
         }
 
-        
+
 
         // SOLUCAO
-        double resultado = 0.0;
-        switch (questao)
-        {
-        case '1':
-            
-            break;
-        case '2':
-            resultado = integral_dupla(n,0,1,T,W);
-            break; 
-        case '3':
-            resultado = integral_dupla(n,0.1,0.5,T,W);//Area
-                     //Volume
-            break; 
-        case '4':
-            
-            break;
-        
-        default:
-            return 1;
-        }
-        
+        double integral;
+        //integral = calcula_integral(n,a,b,T,W);
+        integral = integral_dupla(n,a,b,T,W);
 
 
         // Imprimir resposta
         cout << "Para n igual a " << n <<endl;
-        cout << "O resultado da Integracao e':" << resultado << endl;
+        cout << "O resultado da Integracao e':" << integral << endl;
 
         //Proximo valor de n, se aplicavel
         n+=2;
@@ -122,7 +104,7 @@ int main(){
 
 
     //Resultado exato
-    
+
 
     //Finalizar
     cout << "\n\nDigite algum caractere para finalizar.\n";
@@ -152,16 +134,16 @@ double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
 
     for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
         xi = a + ba2*(T[i]+1);
-        
+
         double sum_j = 0;
-        double dc2 = (d_escolhido(xi)-c_escolhido(xi))/2; // valor medio do intervalo cd 
+        double dc2 = (d_escolhido(xi)-c_escolhido(xi))/2; // valor medio do intervalo cd
         for (int j =1;j<=n;j++)
         {
             yij = c_escolhido(xi) + dc2*(T[j]+1);
             f = funcao_escolhida(xi, yij);
             sum_j += W[j] * f ;
         }
-            
+
         sum_i += W[i] * sum_j * dc2 ;
     }
     return sum_i * ba2 ;
@@ -173,15 +155,15 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
     //return pow(x,3)+1;// f(x)=x^3+1
     switch (questao)
     {
-    case '1':
-        return 1;
+    case '1': //tetraedro
+        return 1-x-y; //z=f(x,y)=1-x-y
     case '2':
-        return 1; 
+        return 1;
     case '3':
-        return 1; 
+        return exp(x*y); // volume do exemplo 3
     case '4':
         return 1;
-    
+
     default:
         return 1;
     }
@@ -191,14 +173,14 @@ double c_escolhido(double xi){
     switch (questao)
     {
     case '1':
-        return 0;
+        return 0; //y<0
     case '2':
         return 0; //Ok
     case '3':
         return pow(xi, 3); //Ok
     case '4':
         return 0;
-    
+
     default:
         return 0;
     }
@@ -208,15 +190,14 @@ double d_escolhido(double xi){
     switch (questao)
     {
     case '1':
-        return 0;
+        return 1-xi; // 0<y<1
     case '2':
         return 1 - xi*xi; //Ok
     case '3':
         return pow(xi, 2); //Ok
-        //return sqrt(1-xi);//sqrt(1-y), mesmo resultado
     case '4':
         return 0;
-    
+
     default:
         return 0;
     }
