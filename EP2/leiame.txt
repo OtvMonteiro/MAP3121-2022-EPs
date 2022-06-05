@@ -1,0 +1,40 @@
+##Leia-me EP2##
+
+################################################
+Esse arquivo contém instruções de uso do programa
+################################################
+
+O arquivo principal é denominado ep1.cpp e pode ser compilado diretamente na maioria de IDEs, 
+alternativamente use o comando: 
+g++ ep2.cpp -o ep2
+
+################################################
+
+Ao iniciar o programa, uma mensagem pedirá a escolha do exemplo do enunciado a ser executado:
+
+"-- Bem vindo ao EP2 de MAP3121-2022--"
+"A seguir, digite de 1 a 4 a questao do enunciado a qual deseja o calculo das integrais duplas"
+"Numero da questão : "
+|
+
+O usuário deverá digitar uma opção entre 1 e 4. Qualquer entrada fora disso fará o programa funcionar de maneira inesperada.
+
+Na opção 1 será calculado o volume de um cubo de aresta 1 e de um tetraedro com vértices em 000 100 010 e 001.
+
+Na opção 2 será calculado a área da região do primeiro quadrante limitada pelos eixos e pela curva y=1-x² de duas maneiras diferentes (mas equivalentes).
+
+Na opção 3 será calculado a área e o volume sob a superfície descrita por z = e^(y/x) com x entre 0.1 e 0.5 e x³ <= y <= x²
+
+Na opção 4 será calculado o volume da calota de altura 1/4 da esfera de raio 1 e o volume do sólido de revolução da rotação de x=0,x=e^(-y²),y-1 e y=1 rotado pelo eixo y.
+
+As integrais serão calculadas através da Integração Numérica de Gauss
+
+
+################################################
+
+SAÍDA
+
+O programa irá imprimir:
+
+o número n de nós, variando entre as três opções: 6-8-10
+O resultado da integral dupla
