@@ -29,8 +29,9 @@ int main(){
     //double a,b;
     cout.precision(17);
 
-
-    cout<<"Digite o numero da questao : \n";
+    cout<<"Bem-Vindo ao EP2 de MAP3121-2022 \n";
+    cout<<"A seguir, digite de 1 a´ 4 a questao do enunciado a qual deseja o calculo das integrais duplas \n";
+    cout<<"Numero da questao : \n";
     cin>>questao;
 
 
@@ -119,7 +120,7 @@ int main(){
             // Imprimir resposta
             questao = '7';
             resultado = integral_dupla(n,0.1,0.5,T,W);//Area
-            cout << "O resultado do Volulme da Regiao e':" << resultado << endl;
+            cout << "O resultado do Volume da Regiao e':" << resultado << endl;
             questao = '3';
             break;
         case '4':
@@ -204,7 +205,7 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
     case '3': // area
         return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1);
     case '7': // volume
-        return exp(x*y);
+        return exp(y/x);
     //case '4.1':
         //return;
     case '4':
