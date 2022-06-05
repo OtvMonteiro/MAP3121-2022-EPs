@@ -11,23 +11,9 @@
 
 using namespace std;
 
-double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
-    double integral=0; // valor da integral
-    double ba2 = (b-a)/2; // valor medio do intervalo ab
-    double x,y;
-    for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
-        x = a + ba2*(T[i]+1);
-        y = funcao_escolhida(x);
-        integral += y*W[i];
-    }
-    integral = integral * ba2; // valor final
-    return integral;
-}
+double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]);
+double funcao_escolhida(double x);
 
-double funcao_escolhida (double x){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
-    return pow(x,3)+1;// f(x)=x^3+1
-    //return 1;
-}
 
 int main(){
     // INICIALIZAR VARI�VEIS
@@ -118,4 +104,27 @@ int main(){
     char end;
     cin >> end;
     return 1;
+}
+
+
+
+
+double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
+    double integral=0; // valor da integral
+    double ba2 = (b-a)/2; // valor medio do intervalo ab
+    double x,y;
+    for (int i=1;i<=n;i++){ // somatorio peso*funcao(abscissa)
+        x = a + ba2*(T[i]+1);
+        y = funcao_escolhida(x);
+        integral += y*W[i];
+    }
+    integral = integral * ba2; // valor final
+    return integral;
+}
+
+double funcao_escolhida(double x){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
+    //return pow(x,3)+1;// f(x)=x^3+1
+    //Questao 2
+    return 1 - x*x;
+    //return 1;
 }
