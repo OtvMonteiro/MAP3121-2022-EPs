@@ -1,6 +1,6 @@
 //EP2 MAP3121
 //Diogo Vaccaro 8803195
-//Ot�vio Henrique Monteiro 10774159
+//Otavio Henrique Monteiro 10774159
 
 #include<stdio.h>
 #include <iostream>
@@ -59,7 +59,7 @@ int main(){
         // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
         switch (n)
         {
-        case 2: //Extra
+        case 2: //Extra   - testes
             T[1]=-sqrt(3)/3;
             T[2]=-T[1];
             W[1]=1;
@@ -89,14 +89,32 @@ int main(){
         
 
         // SOLUCAO
-        double integral;
-        //integral = calcula_integral(n,a,b,T,W);
-        integral = integral_dupla(n,a,b,T,W);
+        double resultado = 0.0;
+        switch (questao)
+        {
+        case '1':
+            
+            break;
+        case '2':
+            resultado = integral_dupla(n,0,1,T,W);
+            break; 
+        case '3':
+            resultado = integral_dupla(n,0.1,0.5,T,W);//Area
+                     //Volume
+            break; 
+        case '4':
+            
+            break;
+        
+        default:
+            return 1;
+        }
+        
 
 
         // Imprimir resposta
         cout << "Para n igual a " << n <<endl;
-        cout << "O resultado da Integracao e':" << integral << endl;
+        cout << "O resultado da Integracao e':" << resultado << endl;
 
         //Proximo valor de n, se aplicavel
         n+=2;
@@ -195,6 +213,7 @@ double d_escolhido(double xi){
         return 1 - xi*xi; //Ok
     case '3':
         return pow(xi, 2); //Ok
+        //return sqrt(1-xi);//sqrt(1-y), mesmo resultado
     case '4':
         return 0;
     
