@@ -8,7 +8,8 @@
 #include<iomanip>
 
 #define MAX 11
-char questao = '2';
+const double PI = 3.141592653589793238463;
+char questao = '2'; //Variavel universal para escolha de questao
 
 using namespace std;
 
@@ -20,22 +21,18 @@ double d_escolhido(double xi);
 
 int main(){
     // INICIALIZAR VARIAVEIS
-    // N de nos
+    // Nmr de nos
     int n = 6;
     int m;
     int i;
     int N;
-    double a,b;
+    //double a,b;
+    cout.precision(17);
 
-    // cout<<"Digite o valor de n de pontos (>=1): \n";
-    // cin>>n;
+
     cout<<"Digite o numero da questao : \n";
     cin>>questao;
 
-    cout<<"Digite o limite inferior de integracao a : \n";
-    cin>>a;
-    cout<<"Digite o limite superior de integracao b : \n";
-    cin>>b;
 
     m = 2*n-1; // maximo grau do polinomio
     double T[MAX]; //vetor de abscissas
@@ -55,11 +52,12 @@ int main(){
     double w10[] = {0.0, 0.0666713443086881375935688, 0.1494513491505805931457763, 0.2190863625159820439955349, 0.2692667193099963550912269, 0.2955242247147528701738930,
                          0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688};
 
+    //ITERACAO PARA DIFERENTES VALORES DE N
     while(n<12){
         // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
         switch (n)
         {
-        case 2: //Extra
+        case 2: //Extra   - testes
             T[1]=-sqrt(3)/3;
             T[2]=-T[1];
             W[1]=1;
@@ -88,15 +86,54 @@ int main(){
 
 
 
-        // SOLUCAO
-        double integral;
-        //integral = calcula_integral(n,a,b,T,W);
-        integral = integral_dupla(n,a,b,T,W);
+        // SOLUCAO INDIVIDUAL PARA CADA EXEMPLO
+        double resultado = 0.0;
+        switch (questao)
+        {
+        case '1':
+            resultado = integral_dupla(n,0,1,T,W); // Cubo
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado do Volume do Cubo e':" << resultado << endl;
+            questao = '5'; // tetraedro
+            resultado = integral_dupla(n,0,1,T,W); //Tetraedro
+            // Imprimir resposta
+            cout << "O resultado do Volume do Tetraedro e':" << resultado << endl;
+            questao = '1';
+            break;
+        case '2':
+            resultado = integral_dupla(n,0,1,T,W);//area dydx
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado da Area da regiao calculado por dydx e':" << resultado << endl;
+            questao = '6'; // area dxdy
+            resultado = integral_dupla(n,0,1,T,W);
+            // Imprimir resposta
+            cout << "O resultado da Area da regiao calculado por dxdy e':" << resultado << endl;
+            questao = '2';
+            break;
+        case '3':
+            resultado = integral_dupla(n,0.1,0.5,T,W);//Area
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado da Area da Superficie e':" << resultado << endl;
+            // Imprimir resposta
+            questao = '7';
+            resultado = integral_dupla(n,0.1,0.5,T,W);//Area
+            cout << "O resultado do Volulme da Regiao e':" << resultado << endl;
+            questao = '3';
+            break;
+        case '4':
+                //Calota
+            resultado = 2*PI*integral_dupla(n,-1,1,T,W);//Solido Revolucao
+            // Imprimir resposta
+            cout << "Para n igual a " << n <<endl;
+            cout << "O resultado do Volume do Solido de Revolucao e':" << resultado << endl;
+            break;
 
+        default:
+            return 1;
+        }
 
-        // Imprimir resposta
-        cout << "Para n igual a " << n <<endl;
-        cout << "O resultado da Integracao e':" << integral << endl;
 
         //Proximo valor de n, se aplicavel
         n+=2;
@@ -113,7 +150,7 @@ int main(){
     return 1;
 }
 
-
+//INTEGRAL SIMPLES
 double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
     double integral=0; // valor da integral
     double ba2 = (b-a)/2; // valor medio do intervalo ab
@@ -127,6 +164,7 @@ double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
     return integral;
 }
 
+//INTEGRAL DUPLA (intervalo interno definido a parte)
 double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
     double ba2 = (b-a)/2; // valor medio do intervalo ab
     double xi, yij, f;
@@ -150,34 +188,49 @@ double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
 }
 
 
-//ATUALIZAR TODOS OS VALORES DAQUI EM DIANTE
+//FUNCAO A SER INTEGRADA PARA CADA QUESTAO
 double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
     //return pow(x,3)+1;// f(x)=x^3+1
     switch (questao)
     {
-    case '1': //tetraedro
+    case '1': // cubo
+        return 1;
+    case '5': //tetraedro
         return 1-x-y; //z=f(x,y)=1-x-y
     case '2':
         return 1;
-    case '3':
-        return exp(x*y); // volume do exemplo 3
-    case '4':
+    case '6':
         return 1;
+    case '3': // area
+        return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1);
+    case '7': // volume
+        return exp(x*y);
+    //case '4.1':
+        //return;
+    case '4':
+        return y; //x (convencao invertida nesse item) - solido de revolucao
 
     default:
         return 1;
     }
 }
 
+//VALOR DE c(x) DO INTERVALO DE INTEGRACAO
 double c_escolhido(double xi){
     switch (questao)
     {
-    case '1':
-        return 0; //y<0
+    case '1': // cubo
+        return 0;
+    case '5': // tetraedro
+        return 0;
     case '2':
         return 0; //Ok
+    case '6':
+        return 0;
     case '3':
         return pow(xi, 3); //Ok
+    case '7':
+        return pow(xi,3);
     case '4':
         return 0;
 
@@ -186,17 +239,25 @@ double c_escolhido(double xi){
     }
 }
 
+//VALOR DE d(x) DO INTERVALO DE INTEGRACAO
 double d_escolhido(double xi){
     switch (questao)
     {
-    case '1':
+    case '1': // cubo
+        return 1;
+    case '5': // tetraedro
         return 1-xi; // 0<y<1
     case '2':
         return 1 - xi*xi; //Ok
+    case '6':
+        return sqrt (1-xi);
+        //sqrt(1-xi)=sqrt(1-y)
     case '3':
         return pow(xi, 2); //Ok
+    case '7':
+        return pow(xi,2);
     case '4':
-        return 0;
+        return exp(-xi*xi);//e^-y^2
 
     default:
         return 0;
