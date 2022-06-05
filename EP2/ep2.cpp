@@ -9,7 +9,7 @@
 
 #define MAX 11
 const double PI = 3.141592653589793238463;
-char questao = '2';
+char questao = '2'; //Variavel universal para escolha de questao
 
 using namespace std;
 
@@ -20,24 +20,19 @@ double c_escolhido(double xi);
 double d_escolhido(double xi);
 
 int main(){
-    // INICIALIZAR VARI�VEIS
+    // INICIALIZAR VARIAVEIS
     // Nmr de nos
     int n = 6;
     int m;
     int i;
     int N;
-    double a,b;
+    //double a,b;
     cout.precision(17);
     
-    // cout<<"Digite o valor de n de pontos (>=1): \n";
-    // cin>>n;
+    
     cout<<"Digite o numero da questao : \n";
     cin>>questao;
 
-    cout<<"Digite o limite inferior de integracao a : \n";
-    cin>>a;
-    cout<<"Digite o limite superior de integracao b : \n";
-    cin>>b;
 
     m = 2*n-1; // maximo grau do polinomio
     double T[MAX]; //vetor de abscissas
@@ -57,6 +52,7 @@ int main(){
     double w10[] = {0.0, 0.0666713443086881375935688, 0.1494513491505805931457763, 0.2190863625159820439955349, 0.2692667193099963550912269, 0.2955242247147528701738930,
                          0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688};
 
+    //ITERACAO PARA DIFERENTES VALORES DE N
     while(n<12){
         // Preencher T e W com os valores das abscissas e dos pesos para o n determinado (preencher do 1 ate n)
         switch (n)
@@ -90,7 +86,7 @@ int main(){
 
         
 
-        // SOLUCAO
+        // SOLUCAO INDIVIDUAL PARA CADA EXEMPLO
         double resultado = 0.0;
         switch (questao)
         {
@@ -142,7 +138,7 @@ int main(){
     return 1;
 }
 
-
+//INTEGRAL SIMPLES
 double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
     double integral=0; // valor da integral
     double ba2 = (b-a)/2; // valor medio do intervalo ab
@@ -156,6 +152,7 @@ double calcula_integral(int n, double a, double b, double T[MAX],double W[MAX]){
     return integral;
 }
 
+//INTEGRAL DUPLA (intervalo interno definido a parte)
 double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
     double ba2 = (b-a)/2; // valor medio do intervalo ab
     double xi, yij, f;
@@ -179,7 +176,7 @@ double integral_dupla(int n, double a, double b, double T[MAX],double W[MAX]){
 }
 
 
-//ATUALIZAR TODOS OS VALORES DAQUI EM DIANTE
+//FUNCAO A SER INTEGRADA PARA CADA QUESTAO
 double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode ser escolhida de acordo com a questao
     //return pow(x,3)+1;// f(x)=x^3+1
     switch (questao)
@@ -190,7 +187,7 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
         return 1; 
     case '3':
         return sqrt(pow((-(y*exp(y/x))/(x*x)),2) + pow(exp(y/x)/x,2) + 1); //area 
-        return exp(x*y); // volume do exemplo 3 
+        //return exp(x*y); // volume do exemplo 3 
     case '4':
         return y; //x (convencao invertida nesse item) - solido de revolucao
     
@@ -199,6 +196,7 @@ double funcao_escolhida(double x, double y){//Funcao usada na integracao, pode s
     }
 }
 
+//VALOR DE c(x) DO INTERVALO DE INTEGRACAO
 double c_escolhido(double xi){
     switch (questao)
     {
@@ -216,6 +214,7 @@ double c_escolhido(double xi){
     }
 }
 
+//VALOR DE d(x) DO INTERVALO DE INTEGRACAO
 double d_escolhido(double xi){
     switch (questao)
     {
