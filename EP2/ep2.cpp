@@ -80,7 +80,7 @@ int main(){
                 W[i] = w10[i];
             }break;
         default:
-            cout << "Valor de n inválido";
+            cout << "Valor de n invï¿½lido";
             char end; cin >> end;
             return 0;
         }
@@ -95,6 +95,7 @@ int main(){
             resultado = integral_dupla(n,0,1,T,W); // Cubo
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado do Volume do Cubo e':" << resultado << endl;
+            
             questao = '5'; // tetraedro
             resultado = integral_dupla(n,0,1,T,W); //Tetraedro
             // Imprimir resposta
@@ -106,6 +107,7 @@ int main(){
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado da Area da regiao calculado por dydx e':" << resultado << endl;
+            
             questao = '6'; // area dxdy
             resultado = integral_dupla(n,0,1,T,W);
             // Imprimir resposta
@@ -117,9 +119,10 @@ int main(){
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado da Area da Superficie e':" << resultado << endl;
-            // Imprimir resposta
+            
             questao = '7';
-            resultado = integral_dupla(n,0.1,0.5,T,W);//Area
+            resultado = integral_dupla(n,0.1,0.5,T,W);//Volume
+            // Imprimir resposta
             cout << "O resultado do Volume da Regiao e':" << resultado << endl;
             questao = '3';
             break;
@@ -128,10 +131,10 @@ int main(){
             // Imprimir resposta
             cout << "Para n igual a " << n <<endl;
             cout << "O resultado do Volume do Solido de Revolucao e':" << resultado << endl;
+            
             questao = '8';
             resultado = 2*PI*integral_dupla(n,0.75,1,T,W);//Calota
             // Imprimir resposta
-            cout << "Para n igual a " << n <<endl;
             cout << "O resultado do Volume da calota esferica de altura 1/4 e':" << resultado << endl;
             questao = '4';
             break;
