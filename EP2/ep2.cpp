@@ -2,10 +2,10 @@
 //Diogo Vaccaro 8803195
 //Otavio Henrique Monteiro 10774159
 
-#include<stdio.h>
+#include <stdio.h>
 #include <iostream>
 #include <cmath>
-#include<iomanip>
+#include <iomanip>
 
 #define MAX 11
 const double PI = 3.141592653589793238463;
