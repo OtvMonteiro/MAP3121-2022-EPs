@@ -1,0 +1,22 @@
+##Leia-me ep3##
+
+################################################
+Esse arquivo contém instruções de uso do programa
+################################################
+
+O arquivo principal é denominado ep3.cpp e pode ser compilado diretamente na maioria de IDEs, 
+alternativamente use o comando: 
+g++ ep3.cpp -o ep3
+
+################################################
+
+Ao iniciar o programa, uma mensagem pedirá a escolha do exemplo do enunciado a ser executado:
+
+As integrais serão calculadas através da Integração Numérica de Gauss
+
+
+################################################
+
+SAÍDA
+
+O programa irá imprimir:
