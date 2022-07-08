@@ -49,32 +49,31 @@ int main()
     {
         double aux = (double)i;
         double xi = aux * h;
-        double xi_ant = aux * (h - 1);
-        double xi_prox = aux * (h + 1);
+        double xi_ant = (aux - 1) * h;
+        double xi_prox = (aux + 1) * h;
         b[i] = 2 / h;
         c[i] = -1 / h;
         a[i + 1] = c[i];
         d[i] = calcula_integral(xi_ant, xi_prox, T); // TODO: corrigir erro, provavelmente aqui
     }
-    imprimir_vetor(a, n, 1);
-    cout << "-------" <<endl;
+    imprimir_vetor(a, n + 1, 1);
+    cout << "-------" << endl;
     imprimir_vetor(b, n, 1);
-    cout << "-------" <<endl;
+    cout << "-------" << endl;
     imprimir_vetor(c, n, 1);
-    cout << "-------" <<endl;
+    cout << "-------" << endl;
     imprimir_vetor(d, n, 1);
-    cout << "-------" <<endl;
-    
+    cout << "-------" << endl;
+
     // Decomposicao LU
     decomposicaoLU(a, b, c, l, u, n);
 
     // Solucao da matriz tridiagonal
     solucaoLU(x, y, d, l, u, c, n);
     // vetor x é o vetor de alfas
-    cout << "-------" <<endl;
+    cout << "-------" << endl;
     imprimir_vetor(x, n, 1);
-    cout << "-------" <<endl;
-
+    cout << "-------" << endl;
 
     // Resultado exato e comparacoes
     for (int i = 1; i <= n; i++) // montado a cada linha (inclui poucos pontos desnecessarios, com lixo)
@@ -86,7 +85,7 @@ int main()
         {
             // TODO: refatorar, esta no momento so' pegando
             double aux_j = (double)j;
-            double xj_ant = aux_j * (h - 1);
+            double xj_ant = (aux_j - 1) * h;
             double phi_j = (xi - xj_ant) / h;
             u_barra += phi_j * x[j];
         }
