@@ -54,7 +54,7 @@ int main()
         b[i] = 2 / h;
         c[i] = -1 / h;
         a[i + 1] = c[i];
-        d[i] = calcula_integral(xi_ant, xi_prox, T); // TODO: corrigir erro, provavelmente aqui
+        d[i] = calcula_integral(xi_ant, xi_prox, T);
     }
     imprimir_vetor(a, n + 1, 1);
     cout << "-------" << endl;
@@ -76,14 +76,14 @@ int main()
     cout << "-------" << endl;
 
     // Resultado exato e comparacoes
-    for (int i = 1; i <= n; i++) // montado a cada linha (inclui poucos pontos desnecessarios, com lixo)
+    for (int i = 1; i <= n; i++)
     {
         double u_barra = 0.0;
         double aux_i = (double)i;
         double xi = aux_i * h;
         for (int j = 1; j <= n; j++)
         {
-            // TODO: refatorar, esta no momento so' pegando
+            // TODO: reavaliar
             double aux_j = (double)j;
             double xj_ant = (aux_j - 1) * h;
             double phi_j = (xi - xj_ant) / h;
