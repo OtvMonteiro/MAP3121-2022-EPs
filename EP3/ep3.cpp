@@ -9,7 +9,7 @@
 
 #define MAX 100
 const double PI = 3.141592653589793238463;
-char questao = '1'; // Variavel universal para escolha de questao
+char questao = '1'; //'t'; // Variavel universal para escolha de questao
 using namespace std;
 
 double calcula_integral(double a, double b, double T);
@@ -86,7 +86,19 @@ int main()
             // TODO: reavaliar
             double aux_j = (double)j;
             double xj_ant = (aux_j - 1) * h;
-            double phi_j = (xi - xj_ant) / h;
+            double xj_prox = (aux_j + 1) * h;
+            double phi_j;
+            // NOTE: nao sei se dessa forma e' necessario (ou correto) - pra mim assim nao contempla os intervalos inteiros, mas ficou muito mais proximo
+            if (i <= j - 1 || i >= j + 1)
+                phi_j = 0.0;
+            else
+            {
+                if (i >= j)
+                    phi_j = (xi - xj_ant) / h;
+                else
+                    phi_j = (xj_prox - xi) / h;
+            }
+            // cout << "phi_j:" << phi_j << "; i:" << i << "; j:" << j << "\n";
             u_barra += phi_j * x[j];
         }
 
@@ -110,16 +122,23 @@ double calcula_integral(double a, double b, double T)
     double x, y;
     for (int i = 1; i <= 2; i++) // 2 Pontos
     {
+        // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
         if (i == 1)
-        { // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
             x = a + ba2 * (-T + 1);
-        }
         else
-        {
             x = a + ba2 * (T + 1);
-        }
 
-        double phi = (x - a) / ba2; //(x-x{i-1} /h) em [x_{i-1}, x_{i}] // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
+        double phi = 0.0;
+
+        if (x >= a && x <= a + ba2) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
+            phi = (x - a) / (ba2);
+        else if (x <= b && x >= b - ba2)
+            phi = (b - x) / (ba2);
+        // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
+        // NOTE: abs contempla os diferentes casos do intervalo, visto que a=xi_ant e b=xi_prox ?
+        cout << "phi:" << phi << "; x:" << x << "; a+h:" << a + ba2 << "; b-h:" << b - ba2 << "\n";
+        // NOTE: o phi de todos esses e' igual, isso e' esperado ou um erro?
+
         integral += phi * funcao_escolhida(x);
         // TODO: considerar casos com k!=1 (talvez so' multiplicar aqui baste)
         // TODO: avaliar necessidade e como implementar q(x)
@@ -135,6 +154,8 @@ double funcao_escolhida(double x)
     {
     case '1': // f(x) de Validacao 4.2
         return (12 * x * (1 - x)) - 2;
+    case 't': // TESTE
+        return x;
     default:
         return 1;
     }
@@ -146,6 +167,8 @@ double solucao_exata(double x, double y)
     {
     case '1': // u(x) de Validacao 4.2
         return x * x * (1 - x) * (1 - x);
+    case 't': // TESTE
+        return -1;
     default:
         return 1;
     }
