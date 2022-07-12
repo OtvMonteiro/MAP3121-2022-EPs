@@ -15,6 +15,8 @@ const double ka = 60;  // Condutividade Termica do Aluminio W/mK
 using namespace std;
 
 double calcula_integral(double a, double b, double T);
+double integra(double a, double b, double (*func)(double, double, double, double));
+double produto_phi_f(double x, double a, double b, double h);
 double funcao_escolhida(double x);
 double solucao_exata(double x, double y);
 double Q_gerado_forcante(double x, double L, double sigma);
@@ -62,7 +64,8 @@ int main()
         b[i] = 2 / h;
         c[i] = -1 / h;
         a[i + 1] = c[i];
-        d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
+        //d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
+        d[i] = integra(xi_ant, xi_prox, &produto_phi_f);
     }
     imprimir_vetor(a, n + 1, 1);
     cout << "-------" << endl;
@@ -155,6 +158,38 @@ double calcula_integral(double a, double b, double T)
     return integral;
 }
 
+double integra(double a, double b, double (*func)(double, double, double, double))
+{
+    double integral = 0;      // valor da integral
+    double ba2 = (b - a) / 2; // valor medio do intervalo ab
+    double T = 1 / sqrt(3);   // Abcissa 2 pontos (uma negativa e outra positiva)
+    double x, y;
+    for (int i = 1; i <= 2; i++) // 2 Pontos
+    {
+        // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
+        if (i == 1)
+            x = a + ba2 * (-T + 1);
+        else
+            x = a + ba2 * (T + 1);
+        integral += func(x, a, b, ba2);
+    }
+    integral = integral * ba2; // valor final
+    return integral;
+}
+
+double produto_phi_f(double x, double a, double b, double h)
+{
+    double phi = 0.0;
+    if (x >= a && x <= a + h) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
+        phi = (x - a) / (h);
+    else if (x <= b && x >= b - h)
+        phi = (b - x) / (h);
+
+    return phi * funcao_escolhida(x);
+}
+
+// TODO: acredito que seja necessario o produto phi_phi para casos mais avancados
+
 double Q_gerado(double P, double L, double height) { return P / (L * height); }
 double Q_gerado_forcante(double x, double L, double sigma)
 {
@@ -170,6 +205,7 @@ double funcao_escolhida(double x)
     case '1': // f(x) de Validacao 4.2
         return (12 * x * (1 - x)) - 2;
     case '2': // Para condicoes de fronteira nao homogeneas
+        // TODO: mudar de chamada, para mais variaveis
         // ~f = f +(b-a)*k' - q*(a + (b-a)*x)
         return (12 * x * (1 - x)) - 2;
     case 't': // TESTE
