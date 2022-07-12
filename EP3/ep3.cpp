@@ -9,12 +9,16 @@
 
 #define MAX 100
 const double PI = 3.141592653589793238463;
-char questao = '1'; //'t'; // Variavel universal para escolha de questao
+char questao = '1';    //'t'; // Variavel universal para escolha de questao
+const double ks = 3.6; // Condutividade Termica do Silicio W/mK
+const double ka = 60;  // Condutividade Termica do Aluminio W/mK
 using namespace std;
 
 double calcula_integral(double a, double b, double T);
 double funcao_escolhida(double x);
 double solucao_exata(double x, double y);
+double Q_gerado_forcante(double x, double L, double sigma);
+double Q_gerado(double P, double L, double height);
 void solucaoLU(double x[MAX], double y[MAX], double d[MAX], double l[MAX], double u[MAX], double c[MAX], int n);
 void decomposicaoLU(double a[MAX], double b[MAX], double c[MAX], double l[MAX], double u[MAX], int n);
 void imprimir_vetor(double V[MAX], int n, int p);
@@ -35,10 +39,13 @@ int main()
     double x[MAX];
     double y[MAX];
 
+    double L = 20;     // mm
+    double height = 2; // mm
+    double P = 30;     // W
+
     cout.precision(17);
 
     cout << "Bem-Vindo ao EP3 de MAP3121-2022 \n";
-    // NOTE: Acredito que querem que façamos um loop com os diferentes valores, inicialmente assim ta bom
     cout << "Digite o numero n de linhas e colunas da matriz Anxn: ";
     cin >> n;
 
@@ -47,6 +54,7 @@ int main()
     double h = 1 / ((double)n + 1);
     for (int i = 1; i <= n; i++) // montado a cada linha (inclui poucos pontos desnecessarios, com lixo)
     {
+        // NOTE: esta montagem considera k(x)=1 e q(x)=0, fazendo com que os produtos internos dos phis sejam simples
         double aux = (double)i;
         double xi = aux * h;
         double xi_ant = (aux - 1) * h;
@@ -54,7 +62,7 @@ int main()
         b[i] = 2 / h;
         c[i] = -1 / h;
         a[i + 1] = c[i];
-        d[i] = calcula_integral(xi_ant, xi_prox, T);
+        d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
     }
     imprimir_vetor(a, n + 1, 1);
     cout << "-------" << endl;
@@ -114,7 +122,7 @@ int main()
     return 1;
 }
 
-// INTEGRAL SIMPLES (Quadratura Gaussiana de 2 pontos)
+// INTEGRAL SIMPLES (Quadratura Gaussiana de 2 pontos), com a definicao do produto interno
 double calcula_integral(double a, double b, double T)
 {
     double integral = 0;      // valor da integral
@@ -147,12 +155,22 @@ double calcula_integral(double a, double b, double T)
     return integral;
 }
 
+double Q_gerado(double P, double L, double height) { return P / (L * height); }
+double Q_gerado_forcante(double x, double L, double sigma)
+{
+    double Q0 = 0.5; // W/mm²
+    return Q0 * exp(-pow(x - L / 2, 2) / pow(sigma, 2));
+}
+
 // FUNCAO PARA CADA QUESTAO
 double funcao_escolhida(double x)
 {
     switch (questao)
     {
     case '1': // f(x) de Validacao 4.2
+        return (12 * x * (1 - x)) - 2;
+    case '2': // Para condicoes de fronteira nao homogeneas
+        // ~f = f +(b-a)*k' - q*(a + (b-a)*x)
         return (12 * x * (1 - x)) - 2;
     case 't': // TESTE
         return x;
@@ -167,22 +185,14 @@ double solucao_exata(double x, double y)
     {
     case '1': // u(x) de Validacao 4.2
         return x * x * (1 - x) * (1 - x);
+    case '2': // Para condicoes de fronteira nao homogeneas
+        return -1;
     case 't': // TESTE
         return -1;
     default:
         return 1;
     }
 }
-
-// double phi_i(double x, double x_ant, double h)
-// {
-//     return (x - x_ant) / h; // em [x_{i-1}, x_{i}] // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
-// }
-
-// double produto(double x, double (*func1)(double), double (*func2)(double))
-// {
-//     return func1(x) * func2(x);
-// }
 
 void decomposicaoLU(double a[MAX], double b[MAX], double c[MAX], double l[MAX], double u[MAX], int n)
 {
