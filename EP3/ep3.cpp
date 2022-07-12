@@ -88,7 +88,7 @@ int main()
             double xj_ant = (aux_j - 1) * h;
             double xj_prox = (aux_j + 1) * h;
             double phi_j;
-            // NOTE: nao sei se dessa forma e' necessario (ou correto) - pra mim assim nao contempla os intervalos inteiros, mas ficou muito mais proximo
+            // NOTE: nao sei se dessa forma e' necessario (ou correto) - pra mim assim (+-1) nao contempla os intervalos inteiros, mas ficou muito mais proximo que (+-2, que faria mais sentido[incluir aqueles a uma distancia até 1])
             if (i <= j - 1 || i >= j + 1)
                 phi_j = 0.0;
             else
@@ -136,8 +136,8 @@ double calcula_integral(double a, double b, double T)
             phi = (b - x) / (ba2);
         // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
         // NOTE: abs contempla os diferentes casos do intervalo, visto que a=xi_ant e b=xi_prox ?
-        cout << "phi:" << phi << "; x:" << x << "; a+h:" << a + ba2 << "; b-h:" << b - ba2 << "\n";
-        // NOTE: o phi de todos esses e' igual, isso e' esperado ou um erro?
+        // cout << "phi:" << phi << "; x:" << x << "; a+h:" << a + ba2 << "; b:" << b << "\n";
+        // NOTE: o phi de todos esses sao praticamente iguais, isso e' esperado ou um erro?
 
         integral += phi * funcao_escolhida(x);
         // TODO: considerar casos com k!=1 (talvez so' multiplicar aqui baste)
