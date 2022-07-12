@@ -16,6 +16,7 @@ using namespace std;
 
 double calcula_integral(double a, double b, double T);
 double integra(double a, double b, double (*func)(double, double, double, double));
+double phi_i (double h, double x, double xi_ant, double xi, double xi_prox);
 double produto_phi_f(double x, double a, double b, double h);
 double funcao_escolhida(double x);
 double solucao_exata(double x, double y);
@@ -96,21 +97,23 @@ int main()
         {
             // TODO: reavaliar
             double aux_j = (double)j;
-            double xj_ant = (aux_j - 1) * h;
-            double xj_prox = (aux_j + 1) * h;
-            double phi_j;
-            // NOTE: nao sei se dessa forma e' necessario (ou correto) - pra mim assim (+-1) nao contempla os intervalos inteiros, mas ficou muito mais proximo que (+-2, que faria mais sentido[incluir aqueles a uma distancia até 1])
-            if (i <= j - 1 || i >= j + 1)
-                phi_j = 0.0;
-            else
-            {
-                if (i >= j)
-                    phi_j = (xi - xj_ant) / h;
-                else
-                    phi_j = (xj_prox - xi) / h;
-            }
-            // cout << "phi_j:" << phi_j << "; i:" << i << "; j:" << j << "\n";
-            u_barra += phi_j * x[j];
+            double xj = aux_j * h;
+            // double xj_ant = (aux_j - 1) * h;
+            // double xj_prox = (aux_j + 1) * h;
+            // double phi_j;
+            // // NOTE: nao sei se dessa forma e' necessario (ou correto) - pra mim assim (+-1) nao contempla os intervalos inteiros, mas ficou muito mais proximo que (+-2, que faria mais sentido[incluir aqueles a uma distancia até 1])
+            // if (i <= j - 1 || i >= j + 1)
+            //     phi_j = 0.0;
+            // else
+            // {
+            //     if (i >= j)
+            //         phi_j = (xi - xj_ant) / h;
+            //     else
+            //         phi_j = (xj_prox - xi) / h;
+            // }
+            // // cout << "phi_j:" << phi_j << "; i:" << i << "; j:" << j << "\n";
+            // u_barra += phi_j * x[j];
+            u_barra += x[j]* phi_i(h, xi, xj-h, xj, xj+h);
         }
 
         double u_exato = solucao_exata(xi, 0);
@@ -125,39 +128,40 @@ int main()
     return 1;
 }
 
-// INTEGRAL SIMPLES (Quadratura Gaussiana de 2 pontos), com a definicao do produto interno
-double calcula_integral(double a, double b, double T)
-{
-    double integral = 0;      // valor da integral
-    double ba2 = (b - a) / 2; // valor medio do intervalo ab
-    double x, y;
-    for (int i = 1; i <= 2; i++) // 2 Pontos
-    {
-        // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
-        if (i == 1)
-            x = a + ba2 * (-T + 1);
-        else
-            x = a + ba2 * (T + 1);
+// // INTEGRAL SIMPLES (Quadratura Gaussiana de 2 pontos), com a definicao do produto interno
+// double calcula_integral(double a, double b, double T)
+// {
+//     double integral = 0;      // valor da integral
+//     double ba2 = (b - a) / 2; // valor medio do intervalo ab
+//     double x, y;
+//     for (int i = 1; i <= 2; i++) // 2 Pontos
+//     {
+//         // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
+//         if (i == 1)
+//             x = a + ba2 * (-T + 1);
+//         else
+//             x = a + ba2 * (T + 1);
 
-        double phi = 0.0;
+//         double phi = 0.0;
 
-        if (x >= a && x <= a + ba2) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
-            phi = (x - a) / (ba2);
-        else if (x <= b && x >= b - ba2)
-            phi = (b - x) / (ba2);
-        // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
-        // NOTE: abs contempla os diferentes casos do intervalo, visto que a=xi_ant e b=xi_prox ?
-        // cout << "phi:" << phi << "; x:" << x << "; a+h:" << a + ba2 << "; b:" << b << "\n";
-        // NOTE: o phi de todos esses sao praticamente iguais, isso e' esperado ou um erro?
+//         if (x >= a && x <= a + ba2) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
+//             phi = (x - a) / (ba2);
+//         else if (x <= b && x >= b - ba2)
+//             phi = (b - x) / (ba2);
+//         // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
+//         // NOTE: abs contempla os diferentes casos do intervalo, visto que a=xi_ant e b=xi_prox ?
+//         // cout << "phi:" << phi << "; x:" << x << "; a+h:" << a + ba2 << "; b:" << b << "\n";
+//         // NOTE: o phi de todos esses sao praticamente iguais, isso e' esperado ou um erro?
 
-        integral += phi * funcao_escolhida(x);
-        // TODO: considerar casos com k!=1 (talvez so' multiplicar aqui baste)
-        // TODO: avaliar necessidade e como implementar q(x)
-    }
-    integral = integral * ba2; // valor final
-    return integral;
-}
+//         integral += phi * funcao_escolhida(x);
+//         // TODO: considerar casos com k!=1 (talvez so' multiplicar aqui baste)
+//         // TODO: avaliar necessidade e como implementar q(x)
+//     }
+//     integral = integral * ba2; // valor final
+//     return integral;
+// }
 
+// Quadratura Gaussiana de 2 pontos
 double integra(double a, double b, double (*func)(double, double, double, double))
 {
     double integral = 0;      // valor da integral
@@ -166,7 +170,6 @@ double integra(double a, double b, double (*func)(double, double, double, double
     double x, y;
     for (int i = 1; i <= 2; i++) // 2 Pontos
     {
-        // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
         if (i == 1)
             x = a + ba2 * (-T + 1);
         else
@@ -177,15 +180,29 @@ double integra(double a, double b, double (*func)(double, double, double, double
     return integral;
 }
 
+double phi_i (double h, double x, double xi_ant, double xi, double xi_prox)
+{
+    double phi;
+    if (x <= xi_ant || x > xi_prox)
+        phi = 0.0;
+    else
+    {
+        if (x > xi_ant && x <= xi)
+            phi = (x - xi_ant) / h;
+        else
+            phi = (xi_prox - x) / h;
+    }
+    return phi;
+}
+
 double produto_phi_f(double x, double a, double b, double h)
 {
-    double phi = 0.0;
-    if (x >= a && x <= a + h) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
-        phi = (x - a) / (h);
-    else if (x <= b && x >= b - h)
-        phi = (b - x) / (h);
-
-    return phi * funcao_escolhida(x);
+    // double phi = 0.0;
+    // if (x >= a && x <= a + h) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
+    //     phi = (x - a) / (h);
+    // else if (x <= b && x >= b - h)
+    //     phi = (b - x) / (h);
+    return phi_i(h,x,a,a+h,b) * funcao_escolhida(x);
 }
 
 // TODO: acredito que seja necessario o produto phi_phi para casos mais avancados
