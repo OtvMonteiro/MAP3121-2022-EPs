@@ -18,14 +18,20 @@ bool debug = true;
 // fronteira
 double fa = 0.0;
 double fb = 0.0;
-
+// dimensoes
+double L = 1;//20;     // mm
+double height = 2; // mm
+double P = 30;     // W
 
 using namespace std;
 
 double calcula_integral(double a, double b, double T);
 double integra(double a, double b, double (*func)(double, double, double, double));
 double phi_i(double h, double x, double xi_ant, double xi, double xi_prox);
+double k(double x);
 double produto_phi_f(double x, double a, double b, double h);
+double produto_phis_normalizados(double x, double a, double b, double h);
+double produto_phis_normalizados_variacao(double x, double a, double b, double h);
 double funcao_escolhida(double x, double fronteira_a, double fronteira_b);
 double solucao_exata(double x, double fronteira_a, double fronteira_b);
 double Q_gerado_forcante(double x, double L, double sigma);
@@ -49,11 +55,6 @@ int main()
     double u[MAX];
     double x[MAX];
     double y[MAX];
-
-    // dimensoes
-    double L = 20;     // mm
-    double height = 2; // mm
-    double P = 30;     // W
 
     cout.precision(17);
 
@@ -81,11 +82,19 @@ int main()
         double xi = aux * h;
         double xi_ant = (aux - 1) * h;
         double xi_prox = (aux + 1) * h;
-        b[i] = 2 / h;
-        c[i] = -1 / h;
-        a[i + 1] = c[i];
+
+        // Para correcao dos intervalos define-se a seguinte consideracao (utilizada localmente)
+        // double _xi = xi / L;
+
+        // Construcao da matriz A
+        // b[i] = 2 / h;
+        // c[i] = -1 / h;
+        // a[i + 1] = c[i];
         // d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
-        d[i] = integra(xi_ant, xi_prox, &produto_phi_f);
+
+        b[i] = integra(xi_ant / L, xi / L, &produto_phis_normalizados) + integra(xi, xi_prox, &produto_phis_normalizados); // TODO: conferir se so' o primeiro intervalo de integracao e' normalizado
+        c[i] = a[i + 1] = integra(xi / L, xi_prox / L, &produto_phis_normalizados_variacao);
+        d[i] = integra(xi_ant, xi, &produto_phi_f) + integra(xi, xi_prox, &produto_phi_f);
     }
 
     // Opcional, mostrar variaveis construidas
@@ -222,6 +231,23 @@ double phi_i(double h, double x, double xi_ant, double xi, double xi_prox)
     return phi;
 }
 
+double k(double x)
+{
+    // k=1 (overwriting variacao de material)
+    return 1;
+
+    // Variacao de material
+    double d = L / 4;
+    if (x > L / 2 - d && x < L / 2 + d)
+    {
+        return ks;
+    }
+    else
+    {
+        return ka;
+    }
+}
+
 double produto_phi_f(double x, double a, double b, double h)
 {
     // double phi = 0.0;
@@ -232,7 +258,15 @@ double produto_phi_f(double x, double a, double b, double h)
     return phi_i(h, x, a, a + h, b) * funcao_escolhida(x, fa, fb);
 }
 
-// TODO: acredito que seja necessario o produto phi_phi para casos mais avancados
+double produto_phis_normalizados(double x, double a, double b, double h)
+{
+    return k(x) / (h * h * L);
+}
+
+double produto_phis_normalizados_variacao(double x, double a, double b, double h)
+{
+    return -k(x) / (h * h * L);
+}
 
 double Q_gerado(double P, double L, double height) { return P / (L * height); }
 double Q_gerado_forcante(double x, double L, double sigma)
