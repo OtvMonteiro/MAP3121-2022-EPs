@@ -8,18 +8,26 @@
 #include <iomanip>
 
 #define MAX 100
+// Constantes
 const double PI = 3.141592653589793238463;
-char questao = '1';    //'t'; // Variavel universal para escolha de questao
 const double ks = 3.6; // Condutividade Termica do Silicio W/mK
 const double ka = 60;  // Condutividade Termica do Aluminio W/mK
+// Variaveis globais de execucao
+char questao = '1'; //'t'; // Variavel universal para escolha de questao
+bool debug = true;
+// fronteira
+double fa = 0.0;
+double fb = 0.0;
+
+
 using namespace std;
 
 double calcula_integral(double a, double b, double T);
 double integra(double a, double b, double (*func)(double, double, double, double));
-double phi_i (double h, double x, double xi_ant, double xi, double xi_prox);
+double phi_i(double h, double x, double xi_ant, double xi, double xi_prox);
 double produto_phi_f(double x, double a, double b, double h);
-double funcao_escolhida(double x);
-double solucao_exata(double x, double y);
+double funcao_escolhida(double x, double fronteira_a, double fronteira_b);
+double solucao_exata(double x, double fronteira_a, double fronteira_b);
 double Q_gerado_forcante(double x, double L, double sigma);
 double Q_gerado(double P, double L, double height);
 void solucaoLU(double x[MAX], double y[MAX], double d[MAX], double l[MAX], double u[MAX], double c[MAX], int n);
@@ -42,6 +50,7 @@ int main()
     double x[MAX];
     double y[MAX];
 
+    // dimensoes
     double L = 20;     // mm
     double height = 2; // mm
     double P = 30;     // W
@@ -54,7 +63,17 @@ int main()
 
     // EXECUCAO
     // Montagem da matriz com produtos internos (integrais)
-    double h = 1 / ((double)n + 1);
+    double h;
+    if (questao == '1')
+        h = 1 / ((double)n + 1);
+    else
+        h = L / ((double)n + 1); // Intervalo de [0, L] // TODO: corrigir para esse caso
+                                 // Na validacao q=0 e k=1
+                                 // ~f = f +(b-a)*k' - q*(a + (b-a)*x)
+
+    // NOTE: IMPORTANTE TODO: no livro ele faz 6 tipos de integracao, que o pdf nao fala (tem tamb simplificacao, mas sem integracao),
+    //   precisa entender o que exatamente ele quer aqui, se e' a equacao abiaxo de (6) pra usarmos q(x), se conseguimos fazer so' mais os produtos de phi (e ai considerar o q(x))...
+
     for (int i = 1; i <= n; i++) // montado a cada linha (inclui poucos pontos desnecessarios, com lixo)
     {
         // NOTE: esta montagem considera k(x)=1 e q(x)=0, fazendo com que os produtos internos dos phis sejam simples
@@ -65,17 +84,22 @@ int main()
         b[i] = 2 / h;
         c[i] = -1 / h;
         a[i + 1] = c[i];
-        //d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
+        // d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
         d[i] = integra(xi_ant, xi_prox, &produto_phi_f);
     }
-    imprimir_vetor(a, n + 1, 1);
-    cout << "-------" << endl;
-    imprimir_vetor(b, n, 1);
-    cout << "-------" << endl;
-    imprimir_vetor(c, n, 1);
-    cout << "-------" << endl;
-    imprimir_vetor(d, n, 1);
-    cout << "-------" << endl;
+
+    // Opcional, mostrar variaveis construidas
+    if (debug)
+    {
+        imprimir_vetor(a, n + 1, 1);
+        cout << "-------" << endl;
+        imprimir_vetor(b, n, 1);
+        cout << "-------" << endl;
+        imprimir_vetor(c, n, 1);
+        cout << "-------" << endl;
+        imprimir_vetor(d, n, 1);
+        cout << "-------" << endl;
+    }
 
     // Decomposicao LU
     decomposicaoLU(a, b, c, l, u, n);
@@ -83,9 +107,12 @@ int main()
     // Solucao da matriz tridiagonal
     solucaoLU(x, y, d, l, u, c, n);
     // vetor x é o vetor de alfas
-    cout << "-------" << endl;
-    imprimir_vetor(x, n, 1);
-    cout << "-------" << endl;
+    if (debug)
+    {
+        cout << "-------" << endl;
+        imprimir_vetor(x, n, 1);
+        cout << "-------" << endl;
+    }
 
     // Resultado exato e comparacoes
     for (int i = 1; i <= n; i++)
@@ -113,10 +140,10 @@ int main()
             // }
             // // cout << "phi_j:" << phi_j << "; i:" << i << "; j:" << j << "\n";
             // u_barra += phi_j * x[j];
-            u_barra += x[j]* phi_i(h, xi, xj-h, xj, xj+h);
+            u_barra += x[j] * phi_i(h, xi, xj - h, xj, xj + h);
         }
 
-        double u_exato = solucao_exata(xi, 0);
+        double u_exato = solucao_exata(xi, fa, fb);
 
         cout << "u" << i << ": encontrado=" << u_barra << "; exato=" << u_exato << "\n";
     }
@@ -180,7 +207,7 @@ double integra(double a, double b, double (*func)(double, double, double, double
     return integral;
 }
 
-double phi_i (double h, double x, double xi_ant, double xi, double xi_prox)
+double phi_i(double h, double x, double xi_ant, double xi, double xi_prox)
 {
     double phi;
     if (x <= xi_ant || x > xi_prox)
@@ -202,7 +229,7 @@ double produto_phi_f(double x, double a, double b, double h)
     //     phi = (x - a) / (h);
     // else if (x <= b && x >= b - h)
     //     phi = (b - x) / (h);
-    return phi_i(h,x,a,a+h,b) * funcao_escolhida(x);
+    return phi_i(h, x, a, a + h, b) * funcao_escolhida(x, fa, fb);
 }
 
 // TODO: acredito que seja necessario o produto phi_phi para casos mais avancados
@@ -215,16 +242,16 @@ double Q_gerado_forcante(double x, double L, double sigma)
 }
 
 // FUNCAO PARA CADA QUESTAO
-double funcao_escolhida(double x)
+double funcao_escolhida(double x, double fronteira_a, double fronteira_b)
 {
+    double y;
     switch (questao)
     {
-    case '1': // f(x) de Validacao 4.2
+    case '0': // f(x) de Validacao 4.2
         return (12 * x * (1 - x)) - 2;
-    case '2': // Para condicoes de fronteira nao homogeneas
-        // TODO: mudar de chamada, para mais variaveis
-        // ~f = f +(b-a)*k' - q*(a + (b-a)*x)
-        return (12 * x * (1 - x)) - 2;
+    case '1': // Para condicoes de fronteira nao homogeneas
+        y = (12 * x * (1 - x)) - 2;
+        return y + fronteira_a + (fronteira_b - fronteira_a) * x;
     case 't': // TESTE
         return x;
     default:
@@ -232,14 +259,16 @@ double funcao_escolhida(double x)
     }
 }
 
-double solucao_exata(double x, double y)
+double solucao_exata(double x, double fronteira_a, double fronteira_b)
 {
+    double y;
     switch (questao)
     {
-    case '1': // u(x) de Validacao 4.2
+    case '0': // u(x) de Validacao 4.2
         return x * x * (1 - x) * (1 - x);
-    case '2': // Para condicoes de fronteira nao homogeneas
-        return -1;
+    case '1': // Para condicoes de fronteira nao homogeneas // TODO: avaliar, ainda esta estranho (deve ser feito isso em ambos da mesma forma?)
+        y = x * x * (1 - x) * (1 - x);
+        return y + fronteira_a + (fronteira_b - fronteira_a) * x;
     case 't': // TESTE
         return -1;
     default:
