@@ -19,19 +19,19 @@ bool debug = true;
 double fa = 0.0;
 double fb = 0.0;
 // dimensoes
-double L = 1;//20;     // mm
+double L = 1;      // 20;     // mm
 double height = 2; // mm
 double P = 30;     // W
 
 using namespace std;
 
 double calcula_integral(double a, double b, double T);
-double integra(double a, double b, double (*func)(double, double, double, double));
+double integra(double a, double b, double xi, double h, double (*func)(double, double, double));
 double phi_i(double h, double x, double xi_ant, double xi, double xi_prox);
 double k(double x);
-double produto_phi_f(double x, double a, double b, double h);
-double produto_phis_normalizados(double x, double a, double b, double h);
-double produto_phis_normalizados_variacao(double x, double a, double b, double h);
+double produto_phi_f(double x, double xi, double h);
+double produto_phis_normalizados(double x, double xi, double h);
+double produto_phis_normalizados_variacao(double x, double xi, double h);
 double funcao_escolhida(double x, double fronteira_a, double fronteira_b);
 double solucao_exata(double x, double fronteira_a, double fronteira_b);
 double Q_gerado_forcante(double x, double L, double sigma);
@@ -46,8 +46,8 @@ int main()
     //  Parametros Gauss (n=2, w=1)
     double T = 1 / sqrt(3); // Abcissa 2 pontos (uma negativa e outra positiva)
     // Matriz Tridiagonal
-    int n;         // Dimensao da matriz // NOTE: confirmar se este é o mesmo n que é falado no enunciado, parece que sim
-    double a[MAX]; // NOTE: confirmar que e' double e nao pode ser float
+    int n; // Dimensao da matriz
+    double a[MAX];
     double b[MAX];
     double c[MAX];
     double d[MAX];
@@ -65,7 +65,7 @@ int main()
     // EXECUCAO
     // Montagem da matriz com produtos internos (integrais)
     double h;
-    if (questao == '1')
+    if (questao == 't')
         h = 1 / ((double)n + 1);
     else
         h = L / ((double)n + 1); // Intervalo de [0, L] // TODO: corrigir para esse caso
@@ -87,14 +87,15 @@ int main()
         // double _xi = xi / L;
 
         // Construcao da matriz A
+        
         // b[i] = 2 / h;
         // c[i] = -1 / h;
         // a[i + 1] = c[i];
         // d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
 
-        b[i] = integra(xi_ant / L, xi / L, &produto_phis_normalizados) + integra(xi, xi_prox, &produto_phis_normalizados); // TODO: conferir se so' o primeiro intervalo de integracao e' normalizado
-        c[i] = a[i + 1] = integra(xi / L, xi_prox / L, &produto_phis_normalizados_variacao);
-        d[i] = integra(xi_ant, xi, &produto_phi_f) + integra(xi, xi_prox, &produto_phi_f);
+        b[i] = integra(xi_ant / L, xi / L, -1, h, &produto_phis_normalizados) + integra(xi, xi_prox, -1, h, &produto_phis_normalizados); // TODO: conferir se so' o primeiro intervalo de integracao e' normalizado
+        c[i] = a[i + 1] = integra(xi / L, xi_prox / L, -1, h, &produto_phis_normalizados_variacao);
+        d[i] = integra(xi_ant, xi, xi, h, &produto_phi_f) + integra(xi, xi_prox, xi, h, &produto_phi_f);
     }
 
     // Opcional, mostrar variaveis construidas
@@ -126,7 +127,7 @@ int main()
     // Resultado exato e comparacoes
     for (int i = 1; i <= n; i++)
     {
-        double u_barra = 0.0;
+        double v_barra = 0.0;
         double aux_i = (double)i;
         double xi = aux_i * h;
         for (int j = 1; j <= n; j++)
@@ -134,24 +135,10 @@ int main()
             // TODO: reavaliar
             double aux_j = (double)j;
             double xj = aux_j * h;
-            // double xj_ant = (aux_j - 1) * h;
-            // double xj_prox = (aux_j + 1) * h;
-            // double phi_j;
-            // // NOTE: nao sei se dessa forma e' necessario (ou correto) - pra mim assim (+-1) nao contempla os intervalos inteiros, mas ficou muito mais proximo que (+-2, que faria mais sentido[incluir aqueles a uma distancia até 1])
-            // if (i <= j - 1 || i >= j + 1)
-            //     phi_j = 0.0;
-            // else
-            // {
-            //     if (i >= j)
-            //         phi_j = (xi - xj_ant) / h;
-            //     else
-            //         phi_j = (xj_prox - xi) / h;
-            // }
-            // // cout << "phi_j:" << phi_j << "; i:" << i << "; j:" << j << "\n";
-            // u_barra += phi_j * x[j];
-            u_barra += x[j] * phi_i(h, xi, xj - h, xj, xj + h);
+            v_barra += x[j] * phi_i(h, xi, xj - h, xj, xj + h);
         }
-
+        // Normalizando
+        double u_barra = v_barra + fa + ((fb - fa) * xi / L);
         double u_exato = solucao_exata(xi, fa, fb);
 
         cout << "u" << i << ": encontrado=" << u_barra << "; exato=" << u_exato << "\n";
@@ -164,41 +151,8 @@ int main()
     return 1;
 }
 
-// // INTEGRAL SIMPLES (Quadratura Gaussiana de 2 pontos), com a definicao do produto interno
-// double calcula_integral(double a, double b, double T)
-// {
-//     double integral = 0;      // valor da integral
-//     double ba2 = (b - a) / 2; // valor medio do intervalo ab
-//     double x, y;
-//     for (int i = 1; i <= 2; i++) // 2 Pontos
-//     {
-//         // NOTE: tem jeito melhor de colocar o sinal da abcissa mas assim basta
-//         if (i == 1)
-//             x = a + ba2 * (-T + 1);
-//         else
-//             x = a + ba2 * (T + 1);
-
-//         double phi = 0.0;
-
-//         if (x >= a && x <= a + ba2) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
-//             phi = (x - a) / (ba2);
-//         else if (x <= b && x >= b - ba2)
-//             phi = (b - x) / (ba2);
-//         // NOTE: fala pra integrar em cada subintervalo de nos consecutivos, eh so isso? ou o outro intervalo tamb precisa ser considerado?
-//         // NOTE: abs contempla os diferentes casos do intervalo, visto que a=xi_ant e b=xi_prox ?
-//         // cout << "phi:" << phi << "; x:" << x << "; a+h:" << a + ba2 << "; b:" << b << "\n";
-//         // NOTE: o phi de todos esses sao praticamente iguais, isso e' esperado ou um erro?
-
-//         integral += phi * funcao_escolhida(x);
-//         // TODO: considerar casos com k!=1 (talvez so' multiplicar aqui baste)
-//         // TODO: avaliar necessidade e como implementar q(x)
-//     }
-//     integral = integral * ba2; // valor final
-//     return integral;
-// }
-
 // Quadratura Gaussiana de 2 pontos
-double integra(double a, double b, double (*func)(double, double, double, double))
+double integra(double a, double b, double xi, double h, double (*func)(double, double, double))
 {
     double integral = 0;      // valor da integral
     double ba2 = (b - a) / 2; // valor medio do intervalo ab
@@ -210,7 +164,26 @@ double integra(double a, double b, double (*func)(double, double, double, double
             x = a + ba2 * (-T + 1);
         else
             x = a + ba2 * (T + 1);
-        integral += func(x, a, b, ba2);
+        integral += func(x, xi, h);
+    }
+    integral = integral * ba2; // valor final
+    return integral;
+}
+
+// Quadratura Gaussiana de 2 pontos PARA PHI*F
+double integra_phi_f(double a, double b, double xi, double h)
+{
+    double integral = 0;      // valor da integral
+    double ba2 = (b - a) / 2; // valor medio do intervalo ab
+    double T = 1 / sqrt(3);   // Abcissa 2 pontos (uma negativa e outra positiva)
+    double x, y;
+    for (int i = 1; i <= 2; i++) // 2 Pontos
+    {
+        if (i == 1)
+            x = a + ba2 * (-T + 1);
+        else
+            x = a + ba2 * (T + 1);
+        integral += phi_i(h, x, xi-h, xi, xi+h) * funcao_escolhida(x, fa, fb);
     }
     integral = integral * ba2; // valor final
     return integral;
@@ -248,22 +221,17 @@ double k(double x)
     }
 }
 
-double produto_phi_f(double x, double a, double b, double h)
+double produto_phi_f(double x, double xi, double h)
 {
-    // double phi = 0.0;
-    // if (x >= a && x <= a + h) //(x-x{i-1} /h) em [x_{i-1}, x_{i}]
-    //     phi = (x - a) / (h);
-    // else if (x <= b && x >= b - h)
-    //     phi = (b - x) / (h);
-    return phi_i(h, x, a, a + h, b) * funcao_escolhida(x, fa, fb);
+    return phi_i(h, x, xi-h, xi, xi+h) * funcao_escolhida(x, fa, fb);
 }
 
-double produto_phis_normalizados(double x, double a, double b, double h)
+double produto_phis_normalizados(double x, double xi, double h)
 {
     return k(x) / (h * h * L);
 }
 
-double produto_phis_normalizados_variacao(double x, double a, double b, double h)
+double produto_phis_normalizados_variacao(double x, double xi, double h)
 {
     return -k(x) / (h * h * L);
 }
@@ -302,7 +270,7 @@ double solucao_exata(double x, double fronteira_a, double fronteira_b)
         return x * x * (1 - x) * (1 - x);
     case '1': // Para condicoes de fronteira nao homogeneas // TODO: avaliar, ainda esta estranho (deve ser feito isso em ambos da mesma forma?)
         y = x * x * (1 - x) * (1 - x);
-        return y + fronteira_a + (fronteira_b - fronteira_a) * x;
+        return y + fronteira_a + ((fronteira_b - fronteira_a) * x / L);
     case 't': // TESTE
         return -1;
     default:
