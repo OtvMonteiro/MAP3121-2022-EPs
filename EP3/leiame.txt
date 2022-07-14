@@ -14,6 +14,7 @@ Ao iniciar o programa, será executado o exemplo do parágrafo 4.2 do enunciado 
 intevalo [0,1] onde k(x) = 1, q(x) = 0 e f(x) = 12x(1-x)-2.
 com n = 7, 15, 31 e 63;
 Os alphas da solução serão impressos, para cada n
+Será impresso o valor de cada ponto xi
 haverá a comparação dos resultados com a solução exata u(x)=x²(1-x)² e o erro máximo será impresso para cada n
 
 ################################################
