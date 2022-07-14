@@ -13,8 +13,9 @@ const double PI = 3.141592653589793238463;
 const double ks = 3.6; // Condutividade Termica do Silicio W/mK
 const double ka = 60;  // Condutividade Termica do Aluminio W/mK
 // Variaveis globais de execucao
-char questao = '1'; //'t'; // Variavel universal para escolha de questao
-bool debug = false; // Quando true imprime diversos valores intermediarios
+char questao = '1';   //'t'; // Variavel universal para escolha de questao
+bool debug = true;    // Quando true imprime diversos valores intermediarios
+bool captura = false; // Quando true e' usada para capturar dados a serem mostrados de cenarios diferentes
 // fronteira
 double fa = 0.0;
 double fb = 0.0;
@@ -70,13 +71,13 @@ int main()
         if (questao == 't')
             h = 1 / ((double)n + 1);
         else
-            h = L / ((double)n + 1); // Intervalo de [0, L] // TODO: corrigir para esse caso
+            h = L / ((double)n + 1); // Intervalo de [0, L] 
                                      // Na validacao q=0 e k=1
                                      // ~f = f +(b-a)*k' - q*(a + (b-a)*x)
 
         for (int i = 1; i <= n; i++) // montado a cada linha (inclui poucos pontos desnecessarios, com lixo)
         {
-            // NOTE: esta montagem considera k(x)=1 e q(x)=0, fazendo com que os produtos internos dos phis sejam simples
+            
             double aux = (double)i;
             double xi = aux * h;
             double xi_ant = (aux - 1) * h;
@@ -86,19 +87,17 @@ int main()
             // double _xi = xi / L;
 
             // Construcao da matriz A
-
-            // b[i] = 2 / h;
-            // c[i] = -1 / h;
-            // a[i + 1] = c[i];
-            // d[i] = calcula_integral(xi_ant, xi_prox, T); // NOTE: Essa funcao de integracao esta para f*phi (para outros produtos internos deve-se ter outra funcao)
-
+                // NOTE: esta montagem considera k(x)=1 e q(x)=0, fazendo com que os produtos internos dos phis sejam simples
+                // b[i] = 2 / h;
+                // c[i] = -1 / h;
+                // a[i + 1] = c[i];
             b[i] = integra(xi_ant / L, xi / L, -1, h, &produto_phis_normalizados) + integra(xi, xi_prox, -1, h, &produto_phis_normalizados); // TODO: conferir se so' o primeiro intervalo de integracao e' normalizado
             c[i] = a[i + 1] = integra(xi / L, xi_prox / L, -1, h, &produto_phis_normalizados_variacao);
             d[i] = integra(xi_ant, xi, xi, h, &produto_phi_f) + integra(xi, xi_prox, xi, h, &produto_phi_f);
         }
 
         // Opcional, mostrar variaveis construidas
-        if (debug)
+        if (debug && captura)
         {
             imprimir_vetor(a, n + 1, 1);
             cout << "-------" << endl;
@@ -118,12 +117,13 @@ int main()
         // vetor x é o vetor de alfas
         if (debug)
         {
-            cout << "-------" << endl;
+            cout << "\n---Vetor de Alfas----" << endl;
             imprimir_vetor(x, n, 1);
             cout << "-------" << endl;
         }
 
         // Resultado exato e comparacoes
+        // Validacao
         double erro_max = 0.0; //||u_barra - u||, pegando o maximo
         for (int i = 1; i <= n; i++)
         {
@@ -148,7 +148,25 @@ int main()
 
             erro_max = max(erro_max, u_barra - u_exato);
         }
-        cout << "\nErro maximo para n=" << n << " : " << erro_max;
+        cout << "\nErro maximo para n=" << n << " : " << erro_max << endl;
+
+        // Diferentes capturas de valores para testes de Materiais k(x) [alterar na funcao]
+        for (int i = 1; i <= n * 10; i++)
+        {
+            double v_barra = 0.0;
+            double aux_i = (double)i;
+            double xi = aux_i * h / 10;
+            for (int j = 1; j <= n; j++)
+            {
+                double aux_j = (double)j;
+                double xj = aux_j * h;
+                v_barra += x[j] * phi_i(h, xi, xj - h, xj, xj + h);
+            }
+            if (captura)
+            {
+                cout << v_barra << endl;
+            }
+        }
     }
 
     // Finalizar
@@ -256,7 +274,7 @@ double solucao_exata(double x, double fronteira_a, double fronteira_b)
     {
     case '0': // u(x) de Validacao 4.2
         return x * x * (1 - x) * (1 - x);
-    case '1': // Para condicoes de fronteira nao homogeneas // TODO: avaliar, ainda esta estranho (deve ser feito isso em ambos da mesma forma?)
+    case '1': // Para condicoes de fronteira nao homogeneas 
         y = x * x * (1 - x) * (1 - x);
         return y + fronteira_a + ((fronteira_b - fronteira_a) * x / L);
     case 't': // TESTE
